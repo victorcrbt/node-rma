@@ -20,6 +20,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      document: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        unique: true,
+      },
       admin: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
