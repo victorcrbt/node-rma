@@ -4,12 +4,20 @@ import User from '../models/User';
 
 class UserController {
   async store(req, res) {
+    const documentRegex = /^[0-9]+$/;
+
     const validationSchema = yup.object().shape({
       name: yup.string().required('O nome é obrigatório.'),
       email: yup
         .string()
         .email()
         .required('O e-mail é obrigatório.'),
+      document: yup
+        .string('O documento só pode conter números.')
+        .min(11, 'O documento deve conter ao menos 11 números.')
+        .max(14, 'O documento deve conter no máximo 14 números.')
+        .matches(documentRegex, 'O documento deve conter apenas números.')
+        .required('O documento é obrigatório.'),
       password: yup
         .string()
         .min(6, 'A senha deve conter pelo menos 6 caracteres.')
@@ -39,12 +47,18 @@ class UserController {
       return res.status(400).json({ error: errors });
     }
 
-    const { email } = req.body;
+    const { email, document } = req.body;
 
     const userExists = await User.findOne({ where: { email } });
 
     if (userExists) {
       return res.status(400).json({ error: 'E-mail já utilizado.' });
+    }
+
+    const checkDocument = await User.findOne({ where: { document }});
+
+    if (checkDocument) {
+      return res.status(400).json({ error: 'CPF ou CNPJ já utilizado.'});
     }
 
     const {
@@ -60,6 +74,7 @@ class UserController {
       msg: 'Usuário cadastrado com sucesso!',
       name,
       email,
+      document,
       admin,
       employee,
       salesman,
