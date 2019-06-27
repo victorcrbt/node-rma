@@ -16,13 +16,16 @@ class UserController {
         .required('A senha é obrigatória.'),
     });
 
+    // Validação dos campos
     try {
+      // Procura por erros na entrada de dados. Se não houver, prossegue com o código.
       await validationSchema.validate(req.body, {
         abortEarly: false,
       });
     } catch (err) {
       const errors = [];
 
+      // Lista todos os erros e insere no array o campo e a mensagem de cada um.
       err.inner.map(error => {
         const infos = {
           field: error.path,
@@ -32,6 +35,7 @@ class UserController {
         errors.push(infos);
       });
 
+      // Se existir qualque erro de validação, retorna em formato json com o campo e a mensagem.
       return res.status(400).json(errors);
     }
 
