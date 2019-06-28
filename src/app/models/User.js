@@ -15,6 +15,7 @@ class User extends Model {
         salesman: Sequelize.BOOLEAN,
         client: Sequelize.BOOLEAN,
         reference_id: Sequelize.INTEGER,
+        avatar_id: Sequelize.INTEGER,
       },
       {
         sequelize,
@@ -25,9 +26,13 @@ class User extends Model {
       if (user.password) {
         user.password_hash = await bcrypt.hash(user.password, 10);
       }
-
-      return this;
     });
+
+    return this;
+  }
+
+  static associate(models) {
+    this.belongsTo(models.File, { foreignKey: 'avatar_id' });
   }
 
   checkPassword(password) {
