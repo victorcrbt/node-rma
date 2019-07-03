@@ -80,6 +80,27 @@ class BrandController {
 
     return res.json(brand);
   }
+
+  async delete(req, res) {
+    /**
+     * Verifica se o usuário é um administrador ou funcionário.
+     */
+    const { admin, employee } = await User.findByPk(req.userId);
+
+    if (!employee && !admin) {
+      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' })
+    }
+
+    const brand = await Brand.findByPk(req.params.id);
+
+    if (!brand) {
+      return res.status(404).json({ error: 'Não foi encontrado uma marca com o ID informado.' });
+    }
+
+    await brand.destroy();
+
+    return res.status(200).json({ msg: 'Deletado com sucesso.' });
+  }
 }
 
 export default new BrandController();
