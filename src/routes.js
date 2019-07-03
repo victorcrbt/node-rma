@@ -6,6 +6,7 @@ import multerConfig from './config/multer';
 // Controllers
 import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
+import StatusController from './app/controllers/StatusController';
 import FileController from './app/controllers/FileController';
 
 // Middlewares
@@ -16,12 +17,16 @@ const upload = multer(multerConfig);
 
 // Rotas sem autenticação
 routes.post('/users', UserController.store);
+
 routes.post('/sessions', SessionController.store);
 
-routes.post('/files', upload.single('file'), FileController.store);
 // Rotas que necessitam autenticação
 routes.use(authMiddleware);
 
 routes.put('/users', UserController.update);
+
+routes.get('/status', StatusController.index);
+
+routes.post('/files', upload.single('file'), FileController.store);
 
 export default routes;
