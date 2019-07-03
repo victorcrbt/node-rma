@@ -38,6 +38,7 @@ routes.post('/brands', BrandController.store);
 routes.put('/brands/:id', BrandController.update);
 routes.delete('/brands/:id', BrandController.delete);
 
+routes.get('/employees', EmployeeController.index);
 routes.post('/employees', EmployeeController.store);
 
 routes.post('/files', upload.single('file'), FileController.store);
