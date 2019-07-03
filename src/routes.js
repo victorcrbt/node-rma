@@ -25,6 +25,7 @@ routes.post('/sessions', SessionController.store);
 // Rotas que necessitam autenticação
 routes.use(authMiddleware);
 
+routes.get('/users', UserController.index);
 routes.put('/users', UserController.update);
 
 routes.get('/status', StatusController.index);
