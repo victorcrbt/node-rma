@@ -3,12 +3,13 @@ import Sequelize from 'sequelize';
 // Importação dos models
 import User from '../app/models/User';
 import File from '../app/models/File';
+import Status from '../app/models/Status';
 
 // Configuração do banco de dados
 import dbConfig from '../config/database';
 
 // Models
-const models = [User, File];
+const models = [User, File, Status];
 
 class Database {
   constructor() {
