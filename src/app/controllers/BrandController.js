@@ -2,8 +2,15 @@ import Brand from '../models/Brand';
 import User from '../models/User';
 
 class BrandController {
-  async store(req, res) {
+  async index(req, res) {
+    const brands = await Brand.findAll({
+      attributes: ['id', 'description']
+    });
 
+    return res.status(200).json(brands);
+  }
+
+  async store(req, res) {
     /**
      * Verifica se o usuário é um administrador ou funcionário.
      */
@@ -43,7 +50,6 @@ class BrandController {
   }
 
   async update(req, res) {
-
     /**
      * Verifica se o usuário é um administrador ou funcionário.
      */
