@@ -32,6 +32,7 @@ routes.get('/status', StatusController.index);
 routes.get('/warranty_types', WarrantyTypeController.index);
 
 routes.post('/brands', BrandController.store);
+routes.put('/brands/:id', BrandController.update);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
