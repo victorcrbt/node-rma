@@ -31,6 +31,7 @@ routes.get('/status', StatusController.index);
 
 routes.get('/warranty_types', WarrantyTypeController.index);
 
+routes.get('/brands', BrandController.index);
 routes.post('/brands', BrandController.store);
 routes.put('/brands/:id', BrandController.update);
 routes.delete('/brands/:id', BrandController.delete);
