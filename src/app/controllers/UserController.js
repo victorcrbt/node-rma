@@ -1,8 +1,32 @@
 import * as yup from 'yup';
 
 import User from '../models/User';
+import File from '../models/File';
 
 class UserController {
+  async index(req, res) {
+    /**
+     * Verifica se o usuário é um administrador.
+     */
+    const { admin } = await User.findByPk(req.userId);
+
+    if (!admin) {
+      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' })
+    }
+
+    const users = await User.findAll({
+      attributes: ['id', 'name', 'email', 'document', 'admin', 'employee', 'client', 'reference_id'],
+      include: [
+        {
+          model: File,
+          as: 'avatar'
+        }
+      ]
+    })
+
+    return res.status(200).json(users);
+  }
+
   async store(req, res) {
     const documentRegex = /^[0-9]+$/;
 
