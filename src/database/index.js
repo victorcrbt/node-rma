@@ -5,12 +5,13 @@ import User from '../app/models/User';
 import File from '../app/models/File';
 import Status from '../app/models/Status';
 import WarrantyType from '../app/models/WarrantyType';
+import Brand from '../app/models/Brand';
 
 // Configuração do banco de dados
 import dbConfig from '../config/database';
 
 // Models
-const models = [User, File, Status, WarrantyType];
+const models = [User, File, Status, WarrantyType, Brand];
 
 class Database {
   constructor() {
