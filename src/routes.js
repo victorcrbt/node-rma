@@ -10,6 +10,7 @@ import StatusController from './app/controllers/StatusController';
 import WarrantyTypeController from './app/controllers/WarrantyTypeController';
 import BrandController from './app/controllers/BrandController';
 import FileController from './app/controllers/FileController';
+import EmployeeController from './app/controllers/EmployeeController';
 
 // Middlewares
 import authMiddleware from './app/middlewares/auth';
@@ -36,6 +37,8 @@ routes.get('/brands', BrandController.index);
 routes.post('/brands', BrandController.store);
 routes.put('/brands/:id', BrandController.update);
 routes.delete('/brands/:id', BrandController.delete);
+
+routes.post('/employees', EmployeeController.store);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
