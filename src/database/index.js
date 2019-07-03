@@ -6,12 +6,13 @@ import File from '../app/models/File';
 import Status from '../app/models/Status';
 import WarrantyType from '../app/models/WarrantyType';
 import Brand from '../app/models/Brand';
+import Employee from '../app/models/Employee';
 
 // Configuração do banco de dados
 import dbConfig from '../config/database';
 
 // Models
-const models = [User, File, Status, WarrantyType, Brand];
+const models = [User, File, Status, WarrantyType, Brand, Employee];
 
 class Database {
   constructor() {
