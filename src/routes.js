@@ -33,6 +33,7 @@ routes.get('/warranty_types', WarrantyTypeController.index);
 
 routes.post('/brands', BrandController.store);
 routes.put('/brands/:id', BrandController.update);
+routes.delete('/brands/:id', BrandController.delete);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
