@@ -8,12 +8,13 @@ import WarrantyType from '../app/models/WarrantyType';
 import Brand from '../app/models/Brand';
 import Employee from '../app/models/Employee';
 import Salesman from '../app/models/Salesman';
+import Client from '../app/models/Client';
 
 // Configuração do banco de dados
 import dbConfig from '../config/database';
 
 // Models
-const models = [User, File, Status, WarrantyType, Brand, Employee, Salesman];
+const models = [User, File, Status, WarrantyType, Brand, Employee, Salesman, Client];
 
 class Database {
   constructor() {
