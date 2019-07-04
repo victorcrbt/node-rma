@@ -11,6 +11,7 @@ import WarrantyTypeController from './app/controllers/WarrantyTypeController';
 import BrandController from './app/controllers/BrandController';
 import FileController from './app/controllers/FileController';
 import EmployeeController from './app/controllers/EmployeeController';
+import SalesmanController from './app/controllers/SalesmanController';
 
 // Middlewares
 import authMiddleware from './app/middlewares/auth';
@@ -43,6 +44,12 @@ routes.get('/employees/:id', EmployeeController.show);
 routes.post('/employees', EmployeeController.store);
 routes.put('/employees/:id', EmployeeController.update);
 routes.delete('/employees/:id', EmployeeController.delete);
+
+routes.get('/salesmen', SalesmanController.index);
+routes.get('/salesmen/:id', SalesmanController.show);
+routes.post('/salesmen', SalesmanController.store);
+routes.put('/salesmen/:id', SalesmanController.update);
+routes.delete('/salesmen/:id', SalesmanController.delete);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
