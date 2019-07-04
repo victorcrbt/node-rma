@@ -5,6 +5,7 @@ class Client extends Model {
     super.init({
       salesman_id: Sequelize.INTEGER,
       company_name: Sequelize.STRING,
+      document: Sequelize.STRING,
       address: Sequelize.STRING,
       address_number: Sequelize.STRING,
       neighborhood: Sequelize.STRING,
