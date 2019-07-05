@@ -14,6 +14,7 @@ import EmployeeController from './app/controllers/EmployeeController';
 import SalesmanController from './app/controllers/SalesmanController';
 import ClientController from './app/controllers/ClientController';
 import ProductController from './app/controllers/ProductController';
+import RegisterController from './app/controllers/RegisterController';
 
 // Middlewares
 import authMiddleware from './app/middlewares/auth';
@@ -94,6 +95,11 @@ routes.get('/products/:id', ProductController.show);
 routes.post('/products', ProductController.store);
 routes.put('/products/:id', ProductController.update);
 routes.delete('/products/:id', ProductController.delete);
+
+/**
+ * Registros
+ */
+routes.post('/registers', RegisterController.store);
 
 /**
  * Arquivos
