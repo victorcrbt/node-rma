@@ -89,7 +89,10 @@ routes.delete('/clients/:id', ClientController.delete);
 /**
  * Produtos
  */
+routes.get('/products', ProductController.index);
+routes.get('/products/:id', ProductController.show);
 routes.post('/products', ProductController.store);
+routes.delete('/products/:id', ProductController.delete);
 
 /**
  * Arquivos
