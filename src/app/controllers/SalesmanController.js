@@ -120,7 +120,7 @@ class SalesmanController {
       });
     }
 
-    salesman.update({
+    await salesman.update({
       name,
       document,
     });
@@ -148,7 +148,7 @@ class SalesmanController {
       });
     }
 
-    salesman.destroy();
+    await salesman.destroy();
 
     return res.status(200).json({ msg: 'Representante deletado com sucesso.' });
   }
