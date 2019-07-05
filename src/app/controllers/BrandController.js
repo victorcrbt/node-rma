@@ -82,7 +82,7 @@ class BrandController {
 
     brand.description = description;
 
-    brand.save();
+    await brand.save();
 
     return res.json(brand);
   }
