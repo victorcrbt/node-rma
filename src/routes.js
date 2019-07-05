@@ -81,6 +81,7 @@ routes.delete('/salesmen/:id', SalesmanController.delete);
  */
 routes.get('/clients', ClientController.index);
 routes.post('/clients', ClientController.store);
+routes.put('/clients/:id', ClientController.update);
 
 /**
  * Arquivos
