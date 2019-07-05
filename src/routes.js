@@ -83,6 +83,7 @@ routes.get('/clients', ClientController.index);
 routes.get('/clients/:id', ClientController.show);
 routes.post('/clients', ClientController.store);
 routes.put('/clients/:id', ClientController.update);
+routes.delete('/clients/:id', ClientController.delete);
 
 /**
  * Arquivos
