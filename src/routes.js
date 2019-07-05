@@ -13,6 +13,7 @@ import FileController from './app/controllers/FileController';
 import EmployeeController from './app/controllers/EmployeeController';
 import SalesmanController from './app/controllers/SalesmanController';
 import ClientController from './app/controllers/ClientController';
+import ProductController from './app/controllers/ProductController';
 
 // Middlewares
 import authMiddleware from './app/middlewares/auth';
@@ -84,6 +85,11 @@ routes.get('/clients/:id', ClientController.show);
 routes.post('/clients', ClientController.store);
 routes.put('/clients/:id', ClientController.update);
 routes.delete('/clients/:id', ClientController.delete);
+
+/**
+ * Produtos
+ */
+routes.post('/products', ProductController.store);
 
 /**
  * Arquivos
