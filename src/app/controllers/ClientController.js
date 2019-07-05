@@ -44,6 +44,43 @@ class ClientController {
     return res.status(200).json(clients);
   }
 
+  async show(req, res) {
+    /**
+     * Verifica se o usuário é um administrador ou funcionário comum.
+     */
+    const { admin, employee, salesman, client, reference_id } = await User.findByPk(req.userId);
+
+    /**
+     * Verifica se todos os tipos estão falsos.
+     */
+    if (!client && !admin && !employee && !salesman) {
+      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' });
+    }
+
+    /**
+     * Se o usuário for cliente, não permite a visualização de outros clientes.
+     */
+    if (client) {
+      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' });
+    }
+
+    const cli = await Client.findByPk(req.params.id);
+
+    /**
+     * Verifica se o usuário é um vendedor e se o cliente pertence a ele.
+     */
+    if (salesman && reference_id !== cli.salesman_id) {
+      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' });
+    }
+
+    /**
+     * Se o usuário for administrador e/ou funcionário comum, retorna todos os clientes.
+     */
+    ;
+
+    return res.status(200).json(cli);
+  }
+
   async store(req, res) {
     /**
      * Verifica se o usuário é um administrador ou funcionário comum.
@@ -82,6 +119,15 @@ class ClientController {
   }
 
   async update(req, res) {
+    /**
+     * Verifica se o usuário é um administrador ou funcionário comum.
+     */
+    const { admin, employee } = await User.findByPk(req.userId);
+
+    if (!admin && !employee) {
+      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' })
+    }
+
     /**
      * Exclui o ID dos campos a serem atualizados.
      */
