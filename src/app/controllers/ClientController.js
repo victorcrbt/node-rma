@@ -180,6 +180,27 @@ class ClientController {
 
     return res.status(200).json(client);
   }
+
+  async delete(req, res) {
+    /**
+     * Verifica se o usuário é um administrador ou funcionário comum.
+     */
+    const { admin, employee } = await User.findByPk(req.userId);
+
+    if (!admin && !employee) {
+      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' })
+    }
+
+    const client = await Client.findByPk(req.params.id);
+
+    if (!client) {
+      return res.status(404).json({ error: 'Não foi encontrado um cliente com o ID especificado.' });
+    }
+
+    client.destroy();
+
+    return res.status(200).json({ msg: 'Cliente deletado com sucesso.' });
+  }
 }
 
 export default new ClientController();
