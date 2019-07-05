@@ -80,6 +80,60 @@ class ClientController {
 
     return res.status(201).json(client);
   }
+
+  async update(req, res) {
+    /**
+     * Exclui o ID dos campos a serem atualizados.
+     */
+    let updateFields = {};
+
+    // Pega as chaves do objeto. A função retorna um array comente com as chaves do objeto.
+    Object.keys(req.body).map(key => {
+      // Verifica se o nome da chave não é 'id'.
+      if (key !== 'id') {
+        // Insere no objeto a chave atual, e o valor do objeto req.body referente a esta chave.
+        return updateFields = {...updateFields, [key]: req.body[key]};
+      }
+    });
+
+    /**
+     * Verifica se o cliente existe.
+     */
+    const client = await Client.findByPk(req.params.id);
+
+    if(!client) {
+      return res.status(404).json({ error: 'Não foi encontrado um cliente com o ID especificado.' });
+    }
+
+    /**
+     * Verifica se o documento não foi utilizado.
+     */
+    const documentExists = await Client.findOne({
+      where: {
+        document: updateFields.document
+      }
+    })
+
+    if (documentExists && updateFields.document !== client.document) {
+      return res.status(400).json({ error: `O documento já está em uso pelo cliente ${documentExists.id}.` })
+    }
+
+    /**
+     * Verifica se o representante existe.
+     */
+    const salesmanExists = await Salesman.findByPk(updateFields.salesman_id);
+
+    if (!salesmanExists) {
+      return res.status(404).json({ error: 'O representante indicado não está cadastrado.' })
+    }
+
+    /**
+     * Atualiza o cliente.
+     */
+    client.update(updateFields);
+
+    return res.status(200).json(client);
+  }
 }
 
 export default new ClientController();
