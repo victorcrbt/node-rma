@@ -11,7 +11,7 @@ class Register extends Model {
         status_id: Sequelize.INTEGER,
         product_id: Sequelize.INTEGER,
         brand_id: Sequelize.INTEGER,
-        entry_invoice: Sequelize.DATE,
+        entry_invoice: Sequelize.INTEGER,
         entry_date: Sequelize.DATE,
         delivery_cost: Sequelize.FLOAT,
         repair_cost: Sequelize.FLOAT,

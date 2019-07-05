@@ -1,3 +1,5 @@
+import { parse } from 'date-fns';
+
 import Register from '../models/Register';
 import User from '../models/User';
 import Client from '../models/Client';
@@ -9,7 +11,63 @@ import Brand from '../models/Brand';
 
 class RegisterController {
   async store(req, res) {
-    return res.json();
+    const {
+      client_id,
+      salesman_id,
+      warranty_type_id,
+      status_id,
+      product_id,
+      brand_id,
+      entry_invoice,
+      entry_date,
+      delivery_cost,
+      repair_cost,
+      exchange_value,
+      register_observations,
+      serial_number,
+    } = req.body;
+
+    const date = parse(entry_date);
+
+    // return res.json({
+    //   client_id,
+    //   salesman_id,
+    //   warranty_type_id,
+    //   status_id,
+    //   brand_id,
+    //   entry_invoice,
+    //   date,
+    //   delivery_cost,
+    //   repair_cost,
+    //   exchange_value,
+    //   register_observations,
+    //   serial_number,
+    // });
+
+    try {
+      const register = await Register.create({
+        user_id: req.userId,
+        client_id,
+        salesman_id,
+        warranty_type_id,
+        status_id,
+        product_id,
+        brand_id,
+        entry_invoice,
+        entry_date: date,
+        delivery_cost,
+        repair_cost,
+        exchange_value,
+        register_observations,
+        serial_number,
+      });
+
+      return res.json(register);
+    } catch (err) {
+      console.log(err);
+
+      return res.status(400).json(err);
+    }
   }
 }
 
