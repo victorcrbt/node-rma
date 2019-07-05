@@ -72,6 +72,44 @@ class ProductController {
     return res.status(201).json(product);
   }
 
+  async update(req, res) {
+    /**
+     * Verifica se o usuário é administrador ou funcionário comum.
+     */
+    const { admin, employee } = await User.findByPk(req.userId);
+
+    if (!admin && !employee) {
+      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' });
+    }
+
+    /**
+     * Remove o ID dos campos que podem ser atualizados.
+     */
+    let updateFields = {};
+
+    Object.keys(req.body).map(key => {
+      if (key !== 'id') {
+        return updateFields = {...updateFields, [key]: req.body[key]};
+      }
+    })
+
+    /**
+     * Verifica se o produto existe.
+     */
+    const product = await Product.findByPk(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ error: 'Não foi encontrado um produto com o ID informado.' });
+    }
+
+    /**
+     * Salva as atualizações.
+     */
+    await product.update(req.body);
+
+    return res.json(product);
+  }
+
   async delete(req, res) {
    /**
      * Verifica se o usuário é administrador ou funcionário comum.
