@@ -74,10 +74,15 @@ class ClientController {
     }
 
     /**
+     * Verifica se o cliente existe.
+     */
+    if (!cli) {
+      return res.status(404).json({ error: 'Não foi encontrado um cliente com o ID especificado.'})
+    }
+
+    /**
      * Se o usuário for administrador e/ou funcionário comum, retorna todos os clientes.
      */
-    ;
-
     return res.status(200).json(cli);
   }
 
