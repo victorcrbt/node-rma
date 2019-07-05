@@ -181,7 +181,7 @@ class ClientController {
     /**
      * Atualiza o cliente.
      */
-    client.update(updateFields);
+    await client.update(updateFields);
 
     return res.status(200).json(client);
   }
@@ -202,7 +202,7 @@ class ClientController {
       return res.status(404).json({ error: 'Não foi encontrado um cliente com o ID especificado.' });
     }
 
-    client.destroy();
+    await client.destroy();
 
     return res.status(200).json({ msg: 'Cliente deletado com sucesso.' });
   }
