@@ -2,6 +2,9 @@ import * as yup from 'yup';
 
 import User from '../models/User';
 import File from '../models/File';
+import Employee from '../models/Employee';
+import Salesman from '../models/Salesman';
+import Client from '../models/Client';
 
 class UserController {
   async index(req, res) {
@@ -47,6 +50,7 @@ class UserController {
         .string()
         .min(6, 'A senha deve conter pelo menos 6 caracteres.')
         .required('A senha é obrigatória.'),
+      register_type: yup.string().required('O tipo de registro é obrigatório.')
     });
 
     // Validação dos campos
@@ -72,7 +76,7 @@ class UserController {
       return res.status(400).json({ error: errors });
     }
 
-    const { email, document } = req.body;
+    const { name, email, document, password, register_type } = req.body;
 
     const userExists = await User.findOne({ where: { email } });
 
@@ -86,21 +90,80 @@ class UserController {
       return res.status(400).json({ error: 'CPF ou CNPJ já utilizado.'});
     }
 
-    const {
+    /**
+     * Baseado no tipo de cadastro, procura pelo documento para ver se existe um funcionário, representante ou cliente com o mesmo documento.
+     * Caso não encontre nenhum, retorna um erro e impede o cadastro.
+     * Caso enontre, define o reference_id como sendo o ID do cadastro encontrado.
+     */
+    let reference_id;
+    let employee = false;
+    let salesman = false;
+    let client = false;
+
+    // Funcionário
+    if (register_type === 'employee') {
+      const employeeExists = await Employee.findOne({
+        where: {
+          document
+        }
+      })
+
+      if (!employeeExists) {
+        return res.status(401).json({ error: 'Não existe um funcionário cadastrado com o documento informado.' });
+      }
+
+      reference_id = employeeExists.id;
+      employee = true
+    }
+
+    // Representante
+    if (register_type === 'salesman') {
+      const salesmanExists = await Salesman.findOne({
+        where: {
+          document
+        }
+      })
+
+      if (!salesmanExists) {
+        return res.status(401).json({ error: 'Não existe um representante cadastrado com o documento informado.' });
+      }
+
+      reference_id = salesmanExists.id;
+      salesman = true;
+    }
+
+    // Cliente
+    if (register_type === 'client') {
+      const clientExists = await Client.findOne({
+        where: {
+          document
+        }
+      })
+
+      if (!clientExists) {
+        return res.status(401).json({ error: 'Não existe um funcionário cadastrado com o documento informado.' });
+      }
+
+      reference_id = clientExists.id;
+      client = true;
+    }
+
+    await User.create({
       name,
-      admin,
+      email,
+      password,
+      document,
       employee,
       salesman,
       client,
       reference_id,
-    } = await User.create(req.body);
+    });
 
     return res.json({
       msg: 'Usuário cadastrado com sucesso!',
       name,
       email,
       document,
-      admin,
       employee,
       salesman,
       client,
