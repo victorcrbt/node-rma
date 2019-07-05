@@ -80,6 +80,7 @@ routes.delete('/salesmen/:id', SalesmanController.delete);
  * Clientes
  */
 routes.get('/clients', ClientController.index);
+routes.get('/clients/:id', ClientController.show);
 routes.post('/clients', ClientController.store);
 routes.put('/clients/:id', ClientController.update);
 
