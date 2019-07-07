@@ -7,20 +7,26 @@ class ClientController {
     /**
      * Verifica se o usuário é um administrador ou funcionário comum.
      */
-    const { admin, employee, salesman, client } = await User.findByPk(req.userId);
+    const { admin, employee, salesman, client } = await User.findByPk(
+      req.userId
+    );
 
     /**
      * Verifica se todos os tipos estão falsos.
      */
     if (!client && !admin && !employee && !salesman) {
-      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' });
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
     /**
      * Se o usuário for cliente, não permite a visualização de outros clientes.
      */
     if (client) {
-      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' });
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
     /**
@@ -29,9 +35,9 @@ class ClientController {
     if (salesman) {
       const clients = await Client.findAll({
         where: {
-          salesman_id: req.refId
-        }
-      })
+          salesman_id: req.refId,
+        },
+      });
 
       return res.status(200).json(clients);
     }
@@ -48,20 +54,30 @@ class ClientController {
     /**
      * Verifica se o usuário é um administrador ou funcionário comum.
      */
-    const { admin, employee, salesman, client, reference_id } = await User.findByPk(req.userId);
+    const {
+      admin,
+      employee,
+      salesman,
+      client,
+      reference_id,
+    } = await User.findByPk(req.userId);
 
     /**
      * Verifica se todos os tipos estão falsos.
      */
     if (!client && !admin && !employee && !salesman) {
-      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' });
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
     /**
      * Se o usuário for cliente, não permite a visualização de outros clientes.
      */
     if (client) {
-      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' });
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
     const cli = await Client.findByPk(req.params.id);
@@ -70,14 +86,18 @@ class ClientController {
      * Verifica se o usuário é um vendedor e se o cliente pertence a ele.
      */
     if (salesman && reference_id !== cli.salesman_id) {
-      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' });
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
     /**
      * Verifica se o cliente existe.
      */
     if (!cli) {
-      return res.status(404).json({ error: 'Não foi encontrado um cliente com o ID especificado.'})
+      return res.status(404).json({
+        error: 'Não foi encontrado um cliente com o ID especificado.',
+      });
     }
 
     /**
@@ -93,7 +113,9 @@ class ClientController {
     const { admin, employee } = await User.findByPk(req.userId);
 
     if (!admin && !employee) {
-      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' })
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
     /**
@@ -102,7 +124,7 @@ class ClientController {
     const usedId = await Client.findByPk(req.body.id);
 
     if (usedId) {
-      return res.status(400).json({ error: 'O ID já está em uso.' })
+      return res.status(400).json({ error: 'O ID já está em uso.' });
     }
 
     /**
@@ -110,12 +132,14 @@ class ClientController {
      */
     const usedDocument = await Client.findOne({
       where: {
-        document: req.body.document
-      }
-    })
+        document: req.body.document,
+      },
+    });
 
     if (usedDocument) {
-      return res.status(400).json({ error: `O documento já está em uso pelo cliente ${usedDocument.id}.` })
+      return res.status(400).json({
+        error: `O documento já está em uso pelo cliente ${usedDocument.id}.`,
+      });
     }
 
     const client = await Client.create(req.body);
@@ -130,7 +154,9 @@ class ClientController {
     const { admin, employee } = await User.findByPk(req.userId);
 
     if (!admin && !employee) {
-      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' })
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
     /**
@@ -143,7 +169,7 @@ class ClientController {
       // Verifica se o nome da chave não é 'id'.
       if (key !== 'id') {
         // Insere no objeto a chave atual, e o valor do objeto req.body referente a esta chave.
-        return updateFields = {...updateFields, [key]: req.body[key]};
+        return (updateFields = { ...updateFields, [key]: req.body[key] });
       }
     });
 
@@ -152,8 +178,10 @@ class ClientController {
      */
     const client = await Client.findByPk(req.params.id);
 
-    if(!client) {
-      return res.status(404).json({ error: 'Não foi encontrado um cliente com o ID especificado.' });
+    if (!client) {
+      return res.status(404).json({
+        error: 'Não foi encontrado um cliente com o ID especificado.',
+      });
     }
 
     /**
@@ -161,12 +189,14 @@ class ClientController {
      */
     const documentExists = await Client.findOne({
       where: {
-        document: updateFields.document
-      }
-    })
+        document: updateFields.document,
+      },
+    });
 
     if (documentExists && updateFields.document !== client.document) {
-      return res.status(400).json({ error: `O documento já está em uso pelo cliente ${documentExists.id}.` })
+      return res.status(400).json({
+        error: `O documento já está em uso pelo cliente ${documentExists.id}.`,
+      });
     }
 
     /**
@@ -175,7 +205,9 @@ class ClientController {
     const salesmanExists = await Salesman.findByPk(updateFields.salesman_id);
 
     if (!salesmanExists) {
-      return res.status(404).json({ error: 'O representante indicado não está cadastrado.' })
+      return res
+        .status(404)
+        .json({ error: 'O representante indicado não está cadastrado.' });
     }
 
     /**
@@ -193,13 +225,17 @@ class ClientController {
     const { admin, employee } = await User.findByPk(req.userId);
 
     if (!admin && !employee) {
-      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' })
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
     const client = await Client.findByPk(req.params.id);
 
     if (!client) {
-      return res.status(404).json({ error: 'Não foi encontrado um cliente com o ID especificado.' });
+      return res.status(404).json({
+        error: 'Não foi encontrado um cliente com o ID especificado.',
+      });
     }
 
     await client.destroy();
