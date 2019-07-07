@@ -5,7 +5,7 @@ import Brand from '../models/Brand';
 class ProductController {
   async index(req, res) {
     const products = await Product.findAll({
-      attributes: ['id', 'brand_id', 'description', 'unit', 'ncm']
+      attributes: ['id', 'brand_id', 'description', 'unit', 'ncm'],
     });
 
     return res.status(200).json(products);
@@ -13,11 +13,13 @@ class ProductController {
 
   async show(req, res) {
     const product = await Product.findByPk(req.params.id, {
-      attributes: ['id', 'brand_id', 'description', 'unit', 'ncm']
+      attributes: ['id', 'brand_id', 'description', 'unit', 'ncm'],
     });
 
     if (!product) {
-      return res.status(404).json({ error: 'Não foi encontrado um produto com o ID informado.' });
+      return res
+        .status(404)
+        .json({ error: 'Não foi encontrado um produto com o ID informado.' });
     }
 
     return res.status(200).json(product);
@@ -30,7 +32,9 @@ class ProductController {
     const { admin, employee } = await User.findByPk(req.userId);
 
     if (!admin && !employee) {
-      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' });
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
     /**
@@ -47,12 +51,14 @@ class ProductController {
      */
     const descriptionExists = await Product.findOne({
       where: {
-        description: req.body.description
-      }
-    })
+        description: req.body.description,
+      },
+    });
 
     if (descriptionExists) {
-      return res.status(400).json({ error: `Descriçao já utilizada no produto ${descriptionExists.id}.` })
+      return res.status(400).json({
+        error: `Descriçao já utilizada no produto ${descriptionExists.id}.`,
+      });
     }
 
     /**
@@ -61,7 +67,9 @@ class ProductController {
     const brandExists = await Brand.findByPk(req.body.brand_id);
 
     if (!brandExists) {
-      return res.status(404).json({ error: 'A marca informada não está cadastrada.' });
+      return res
+        .status(404)
+        .json({ error: 'A marca informada não está cadastrada.' });
     }
 
     /**
@@ -79,7 +87,9 @@ class ProductController {
     const { admin, employee } = await User.findByPk(req.userId);
 
     if (!admin && !employee) {
-      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' });
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
     /**
@@ -89,9 +99,9 @@ class ProductController {
 
     Object.keys(req.body).map(key => {
       if (key !== 'id') {
-        return updateFields = {...updateFields, [key]: req.body[key]};
+        return (updateFields = { ...updateFields, [key]: req.body[key] });
       }
-    })
+    });
 
     /**
      * Verifica se o produto existe.
@@ -99,7 +109,9 @@ class ProductController {
     const product = await Product.findByPk(req.params.id);
 
     if (!product) {
-      return res.status(404).json({ error: 'Não foi encontrado um produto com o ID informado.' });
+      return res
+        .status(404)
+        .json({ error: 'Não foi encontrado um produto com o ID informado.' });
     }
 
     /**
@@ -111,19 +123,23 @@ class ProductController {
   }
 
   async delete(req, res) {
-   /**
+    /**
      * Verifica se o usuário é administrador ou funcionário comum.
      */
     const { admin, employee } = await User.findByPk(req.userId);
 
     if (!admin && !employee) {
-      return res.status(401).json({ error: 'Você não tem permissão para realizar esta ação.' });
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
     const product = await Product.findByPk(req.params.id);
 
     if (!product) {
-      return res.status(404).json({ error: 'Não foi encontrado um produto com o ID informado.' });
+      return res
+        .status(404)
+        .json({ error: 'Não foi encontrado um produto com o ID informado.' });
     }
 
     await product.destroy();
