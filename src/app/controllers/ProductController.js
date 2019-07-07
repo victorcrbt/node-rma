@@ -99,7 +99,7 @@ class ProductController {
 
     Object.keys(req.body).map(key => {
       if (key !== 'id') {
-        return (updateFields = { ...updateFields, [key]: req.body[key] });
+        updateFields = { ...updateFields, [key]: req.body[key] };
       }
     });
 
@@ -112,6 +112,17 @@ class ProductController {
       return res
         .status(404)
         .json({ error: 'Não foi encontrado um produto com o ID informado.' });
+    }
+
+    /**
+     * Verifica se a marca está cadastrada.
+     */
+    const brandExists = await Brand.findByPk(updateFields.brand_id);
+
+    if (updateFields.brand_id && !brandExists) {
+      return res
+        .status(404)
+        .json({ error: 'A marca informada não está cadastrada.' });
     }
 
     /**
