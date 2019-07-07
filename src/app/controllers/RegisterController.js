@@ -29,30 +29,37 @@ class RegisterController {
 
     const date = parse(entry_date);
 
-    // return res.json({
-    //   client_id,
-    //   salesman_id,
-    //   warranty_type_id,
-    //   status_id,
-    //   brand_id,
-    //   entry_invoice,
-    //   date,
-    //   delivery_cost,
-    //   repair_cost,
-    //   exchange_value,
-    //   register_observations,
-    //   serial_number,
-    // });
+    /**
+     * Verifica se o cliente existe.
+     */
+    const client = await Client.findByPk(client_id);
+
+    if (!client) {
+      return res
+        .status(404)
+        .json({ error: 'O cliente informado não está cadastrado.' });
+    }
+
+    /**
+     * Verifica se o produto existe.
+     */
+    const product = await Product.findByPk(product_id);
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ error: 'O produto informado não está cadastrado.' });
+    }
 
     try {
       const register = await Register.create({
         user_id: req.userId,
         client_id,
-        salesman_id,
+        salesman_id: client.salesman_id, // Não precisa ser enviado
         warranty_type_id,
-        status_id,
+        status_id: 1, // Não precisa ser enviado
         product_id,
-        brand_id,
+        brand_id: product.brand_id, // Não precisa ser enviado
         entry_invoice,
         entry_date: date,
         delivery_cost,
