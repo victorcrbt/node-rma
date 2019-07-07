@@ -142,6 +142,17 @@ class ClientController {
       });
     }
 
+    /**
+     * Verifica se o representante está cadastrado.
+     */
+    const salesmanExists = await Salesman.findByPk(req.body.salesman_id);
+
+    if (req.body.salesman_id && !salesmanExists) {
+      return res
+        .status(404)
+        .json({ error: 'O representante informado não está cadastrado.' });
+    }
+
     const client = await Client.create(req.body);
 
     return res.status(201).json(client);
@@ -204,7 +215,7 @@ class ClientController {
      */
     const salesmanExists = await Salesman.findByPk(updateFields.salesman_id);
 
-    if (!salesmanExists) {
+    if (updateFields.salesman_id && !salesmanExists) {
       return res
         .status(404)
         .json({ error: 'O representante indicado não está cadastrado.' });
