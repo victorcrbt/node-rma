@@ -265,6 +265,90 @@ class RegisterController {
     }
   }
 
+  async update(req, res) {
+    /**
+     * Verifica se o usuário é administrador ou funcionário comum.
+     */
+    const { admin, employee } = await User.findByPk(req.userId);
+
+    if (!admin && !employee) {
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
+    }
+
+    // Desestruturação do body
+    const {
+      warranty_type_id,
+      status_id,
+      delivery_cost,
+      repair_cost,
+      exchange_value,
+      register_observations,
+    } = req.body;
+
+    try {
+      const register = await Register.findByPk(req.params.id);
+
+      if (!register) {
+        return res.status(404).json({
+          error: 'Não foi encontrado um registro com o ID especificado.',
+        });
+      }
+
+      let updateFields = {
+        warranty_type_id,
+        status_id,
+        delivery_cost,
+        repair_cost,
+        exchange_value,
+        register_observations,
+      };
+
+      /**
+       * Verifica se o tipo de garantia foi alterado.
+       */
+      if (
+        warranty_type_id &&
+        register.warranty_type_id !== 2 &&
+        warranty_type_id !== register.warranty_type_id
+      ) {
+        updateFields = {
+          ...updateFields,
+          exchange_mail: true,
+        };
+      }
+
+      /**
+       * Verifica se o status é diferente do atual.
+       */
+      if (status_id && status_id !== register.status_id) {
+        updateFields = {
+          ...updateFields,
+          last_status_date: parse(new Date()),
+        };
+      }
+
+      try {
+        await register.update(updateFields, {
+          where: {
+            id: req.params.id,
+          },
+        });
+
+        return res.status(200).json(register);
+      } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({ error: 'Erro interno no servidor.' });
+      }
+    } catch (error) {
+      console.log(error);
+
+      return res.status(500).json({ error: 'Erro interno no servidor.' });
+    }
+  }
+
   async delete(req, res) {
     /**
      * Verifica se o usuário é administrador ou funcionário comum.
