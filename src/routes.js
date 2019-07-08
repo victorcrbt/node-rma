@@ -102,6 +102,7 @@ routes.delete('/products/:id', ProductController.delete);
 routes.get('/registers', RegisterController.index);
 routes.get('/registers/:id', RegisterController.show);
 routes.post('/registers', RegisterController.store);
+routes.delete('/registers/:id', RegisterController.delete);
 
 /**
  * Arquivos
