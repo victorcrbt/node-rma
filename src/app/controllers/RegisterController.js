@@ -245,11 +245,9 @@ class RegisterController {
       const register = await Register.create({
         user_id: req.userId,
         client_id,
-        salesman_id: client.salesman_id, // Não precisa ser enviado
         warranty_type_id,
         status_id: 1, // Não precisa ser enviado
         product_id,
-        brand_id: product.brand_id, // Não precisa ser enviado
         entry_invoice,
         entry_date: date,
         delivery_cost,
