@@ -99,6 +99,8 @@ routes.delete('/products/:id', ProductController.delete);
 /**
  * Registros
  */
+routes.get('/registers', RegisterController.index);
+routes.get('/registers/:id', RegisterController.show);
 routes.post('/registers', RegisterController.store);
 
 /**
