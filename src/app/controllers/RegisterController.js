@@ -33,7 +33,7 @@ class RegisterController {
     }
 
     try {
-      const registers = await Register.findOne({
+      const registers = await Register.findAll({
         where,
         include: [
           {
@@ -262,6 +262,43 @@ class RegisterController {
       console.log(err);
 
       return res.status(400).json(err);
+    }
+  }
+
+  async delete(req, res) {
+    /**
+     * Verifica se o usuário é administrador ou funcionário comum.
+     */
+    const { admin, employee } = await User.findByPk(req.userId);
+
+    if (!admin && !employee) {
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
+    }
+
+    try {
+      const register = await Register.findByPk(req.params.id);
+
+      if (!register) {
+        return res.status(404).json({
+          error: 'Não foi encontrado um registro com o ID especificado.',
+        });
+      }
+
+      try {
+        await register.destroy();
+
+        return res.status(200).json({ msg: 'Registro deletado com sucesso.' });
+      } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({ error: 'Erro interno no servidor.' });
+      }
+    } catch (error) {
+      console.log(error);
+
+      return res.status(500).json({ error: 'Erro interno no servidor.' });
     }
   }
 }
