@@ -185,6 +185,17 @@ class RegisterController {
   }
 
   async store(req, res) {
+    /**
+     * Verifica se o usuário é um administrador ou funcionário comum.
+     */
+    const { admin, employee } = await User.findByPk(req.userId);
+
+    if (!admin && !employee) {
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
+    }
+
     const {
       client_id,
       warranty_type_id,
