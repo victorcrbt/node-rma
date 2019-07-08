@@ -33,7 +33,7 @@ class RegisterController {
     }
 
     try {
-      const registers = await Register.findAll({
+      const registers = await Register.findOne({
         where,
         include: [
           {
@@ -58,11 +58,13 @@ class RegisterController {
               'phone_number',
               'email',
             ],
-          },
-          {
-            model: Salesman,
-            as: 'salesman',
-            attributes: ['id', 'name'],
+            include: [
+              {
+                model: Salesman,
+                as: 'salesman',
+                attributes: ['id', 'name'],
+              },
+            ],
           },
           {
             model: WarrantyType,
@@ -78,11 +80,13 @@ class RegisterController {
             model: Product,
             as: 'product',
             attributes: ['id', 'description', 'unit'],
-          },
-          {
-            model: Brand,
-            as: 'brand',
-            attributes: ['id', 'description'],
+            include: [
+              {
+                model: Brand,
+                as: 'brand',
+                attributes: ['id', 'description'],
+              },
+            ],
           },
         ],
       });
@@ -144,11 +148,13 @@ class RegisterController {
               'phone_number',
               'email',
             ],
-          },
-          {
-            model: Salesman,
-            as: 'salesman',
-            attributes: ['id', 'name'],
+            include: [
+              {
+                model: Salesman,
+                as: 'salesman',
+                attributes: ['id', 'name'],
+              },
+            ],
           },
           {
             model: WarrantyType,
@@ -164,11 +170,13 @@ class RegisterController {
             model: Product,
             as: 'product',
             attributes: ['id', 'description', 'unit'],
-          },
-          {
-            model: Brand,
-            as: 'brand',
-            attributes: ['id', 'description'],
+            include: [
+              {
+                model: Brand,
+                as: 'brand',
+                attributes: ['id', 'description'],
+              },
+            ],
           },
         ],
       });
