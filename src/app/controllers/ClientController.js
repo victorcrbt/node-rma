@@ -1,9 +1,72 @@
+import { Op } from 'sequelize';
+
 import Client from '../models/Client';
 import User from '../models/User';
 import Salesman from '../models/Salesman';
 
 class ClientController {
   async index(req, res) {
+    const where = {};
+
+    const {
+      id,
+      company_name,
+      document,
+      address,
+      address_number,
+      city,
+      state,
+    } = req.query;
+
+    /**
+     * Verifica se o ID do cliente foi enviado
+     */
+    if (id) {
+      where.id = id;
+    }
+
+    /**
+     * Verifica se a razão social foi enviada
+     */
+    if (company_name) {
+      where.company_name = { [Op.iLike]: `%${company_name}%` };
+    }
+
+    /**
+     * Verifica se o documento foi enviado
+     */
+    if (document) {
+      where.document = { [Op.iLike]: `%${document}%` };
+    }
+
+    /**
+     * Verifica se o endereço foi enviado
+     */
+    if (address) {
+      where.address = { [Op.iLike]: `%${address}%` };
+    }
+
+    /**
+     * Verifica se o número do endereço foi enviado
+     */
+    if (address_number) {
+      where.address_number = address_number;
+    }
+
+    /**
+     * Verifica se a cidade foi enviada
+     */
+    if (city) {
+      where.city = { [Op.iLike]: `%${city}%` };
+    }
+
+    /**
+     * Verifica se o estado foi enviado
+     */
+    if (state) {
+      where.state = { [Op.iLike]: `${state}` };
+    }
+
     /**
      * Verifica se o usuário é um administrador ou funcionário comum.
      */
@@ -33,10 +96,10 @@ class ClientController {
      * Se o usuário for vendedor, lista apenas os seus clientes.
      */
     if (salesman) {
+      where.salesman_id = req.refId;
+
       const clients = await Client.findAll({
-        where: {
-          salesman_id: req.refId,
-        },
+        where,
       });
 
       return res.status(200).json(clients);
