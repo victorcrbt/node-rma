@@ -1,10 +1,31 @@
+import { Op } from 'sequelize';
+
 import Brand from '../models/Brand';
 import User from '../models/User';
 
 class BrandController {
   async index(req, res) {
+    const where = {};
+
+    const { id, description } = req.query;
+
+    /**
+     * Verifica se o id foi enviado na query
+     */
+    if (id) {
+      where.id = id;
+    }
+
+    /**
+     * Verifica se a descrição foi enviada na query
+     */
+    if (description) {
+      where.description = { [Op.iLike]: `%${description}%` };
+    }
+
     const brands = await Brand.findAll({
-      attributes: ['id', 'description']
+      where,
+      attributes: ['id', 'description'],
     });
 
     return res.status(200).json(brands);
