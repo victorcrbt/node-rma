@@ -10,14 +10,185 @@ import Product from '../models/Product';
 import Brand from '../models/Brand';
 
 class RegisterController {
+  async index(req, res) {
+    let where = {};
+
+    /**
+     * Verifica o tipo de usuário para retornar os dados de acordo.
+     */
+    const { salesman, client } = await User.findByPk(req.userId);
+
+    if (salesman) {
+      where = {
+        ...where,
+        salesman_id: req.refId,
+      };
+    }
+
+    if (client) {
+      where = {
+        ...where,
+        client_id: req.refId,
+      };
+    }
+
+    try {
+      const registers = await Register.findAll({
+        where,
+        include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'name'],
+          },
+          {
+            model: Client,
+            as: 'client',
+            attributes: [
+              'id',
+              'company_name',
+              'document',
+              'address',
+              'address_number',
+              'neighborhood',
+              'zip_code',
+              'city',
+              'state',
+              'area_code',
+              'phone_number',
+              'email',
+            ],
+          },
+          {
+            model: Salesman,
+            as: 'salesman',
+            attributes: ['id', 'name'],
+          },
+          {
+            model: WarrantyType,
+            as: 'warranty_type',
+            attributes: ['id', 'description'],
+          },
+          {
+            model: Status,
+            as: 'status',
+            attributes: ['id', 'description'],
+          },
+          {
+            model: Product,
+            as: 'product',
+            attributes: ['id', 'description', 'unit'],
+          },
+          {
+            model: Brand,
+            as: 'brand',
+            attributes: ['id', 'description'],
+          },
+        ],
+      });
+
+      return res.status(200).json(registers);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'Erro interno no servidor.' });
+    }
+  }
+
+  async show(req, res) {
+    let where = {
+      id: req.params.id,
+    };
+
+    /**
+     * Verifica o tipo de usuário para retornar os dados de acordo.
+     */
+    const { salesman, client } = await User.findByPk(req.userId);
+
+    if (salesman) {
+      where = {
+        ...where,
+        salesman_id: req.refId,
+      };
+    }
+
+    if (client) {
+      where = {
+        ...where,
+        client_id: req.refId,
+      };
+    }
+
+    try {
+      const register = await Register.findOne({
+        where,
+        include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'name'],
+          },
+          {
+            model: Client,
+            as: 'client',
+            attributes: [
+              'id',
+              'company_name',
+              'document',
+              'address',
+              'address_number',
+              'neighborhood',
+              'zip_code',
+              'city',
+              'state',
+              'area_code',
+              'phone_number',
+              'email',
+            ],
+          },
+          {
+            model: Salesman,
+            as: 'salesman',
+            attributes: ['id', 'name'],
+          },
+          {
+            model: WarrantyType,
+            as: 'warranty_type',
+            attributes: ['id', 'description'],
+          },
+          {
+            model: Status,
+            as: 'status',
+            attributes: ['id', 'description'],
+          },
+          {
+            model: Product,
+            as: 'product',
+            attributes: ['id', 'description', 'unit'],
+          },
+          {
+            model: Brand,
+            as: 'brand',
+            attributes: ['id', 'description'],
+          },
+        ],
+      });
+
+      if (!register) {
+        return res.status(404).json({ error: 'Nenhum registro encontrado.' });
+      }
+
+      return res.status(200).json(register);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'Erro interno no servidor.' });
+    }
+  }
+
   async store(req, res) {
     const {
       client_id,
-      salesman_id,
       warranty_type_id,
-      status_id,
       product_id,
-      brand_id,
       entry_invoice,
       entry_date,
       delivery_cost,
