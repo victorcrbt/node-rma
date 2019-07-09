@@ -1,10 +1,29 @@
+import { Op } from 'sequelize';
+
 import Product from '../models/Product';
 import User from '../models/User';
 import Brand from '../models/Brand';
 
 class ProductController {
   async index(req, res) {
+    const where = {};
+
+    const { id, description, brand_id } = req.query;
+
+    if (id) {
+      where.id = id;
+    }
+
+    if (description) {
+      where.description = { [Op.iLike]: `%${description}%` };
+    }
+
+    if (brand_id) {
+      where.brand_id = brand_id;
+    }
+
     const products = await Product.findAll({
+      where,
       attributes: ['id', 'brand_id', 'description', 'unit', 'ncm'],
     });
 
