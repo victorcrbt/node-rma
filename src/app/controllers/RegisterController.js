@@ -1,4 +1,5 @@
-import { parse } from 'date-fns';
+import { parse, startOfDay, endOfDay } from 'date-fns';
+import { Op } from 'sequelize';
 
 import Register from '../models/Register';
 import User from '../models/User';
@@ -11,25 +12,97 @@ import Brand from '../models/Brand';
 
 class RegisterController {
   async index(req, res) {
-    let where = {};
+    const where = {};
+    const numberRegex = /^[0-9]*$/; // Testa se o parâmetro enviado contém somente números.
+
+    const {
+      id,
+      product,
+      client,
+      brand_id,
+      entry_date,
+      last_status_date,
+      warranty_type_id,
+      status_id,
+    } = req.query;
+
+    if (id) {
+      where.id = id;
+    }
+
+    if (product) {
+      where[Op.or] = [
+        {
+          /**
+           * Verifica se o valor enviado contém somente números. Se sim, transforma a string em número e faz a busca,
+           * caso contrário, deixa o campo nulo.
+           */
+          '$product.id$': numberRegex.test(product) ? Number(product) : null,
+        },
+        {
+          '$product.description$': { [Op.iLike]: `%${product}%` },
+        },
+      ];
+    }
+
+    if (client) {
+      where[Op.or] = [
+        {
+          /**
+           * Verifica se o valor enviado contém somente números. Se sim, transforma a string em número e faz a busca,
+           * caso contrário, deixa o campo nulo.
+           */
+          '$client.id$': numberRegex.test(client) ? Number(client) : null,
+        },
+        {
+          '$client.company_name$': { [Op.iLike]: `%${client}%` },
+        },
+      ];
+    }
+
+    if (brand_id) {
+      where['$product.brand.id$'] = brand_id;
+    }
+
+    if (entry_date) {
+      where.entry_date = {
+        [Op.between]: [
+          startOfDay(parse(entry_date)),
+          endOfDay(parse(entry_date)),
+        ],
+      };
+    }
+
+    if (last_status_date) {
+      where.last_status_date = {
+        [Op.between]: [
+          startOfDay(parse(last_status_date)),
+          endOfDay(parse(last_status_date)),
+        ],
+      };
+    }
+
+    if (warranty_type_id) {
+      where.warranty_type_id = warranty_type_id;
+    }
+
+    if (status_id) {
+      where.status_id = status_id;
+    }
 
     /**
      * Verifica o tipo de usuário para retornar os dados de acordo.
      */
-    const { salesman, client } = await User.findByPk(req.userId);
+    const { salesman: isSaleman, client: isClient } = await User.findByPk(
+      req.userId
+    );
 
-    if (salesman) {
-      where = {
-        ...where,
-        salesman_id: req.refId,
-      };
+    if (isSaleman) {
+      where['$client.salesman.id$'] = req.refId;
     }
 
-    if (client) {
-      where = {
-        ...where,
-        client_id: req.refId,
-      };
+    if (isClient) {
+      where.client_id = req.refId;
     }
 
     try {
