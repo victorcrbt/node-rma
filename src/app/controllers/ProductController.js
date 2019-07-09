@@ -10,14 +10,23 @@ class ProductController {
 
     const { id, description, brand_id } = req.query;
 
+    /**
+     * Verifica se o id foi enviado
+     */
     if (id) {
       where.id = id;
     }
 
+    /**
+     * Verifica se a descrição foi enviada
+     */
     if (description) {
       where.description = { [Op.iLike]: `%${description}%` };
     }
 
+    /**
+     * Verifica se a marca foi enviada
+     */
     if (brand_id) {
       where.brand_id = brand_id;
     }
