@@ -9,5 +9,6 @@ Funcionalidades que serão implementadas:
   - Clientes poderão visualizar apenas os registros vinculados ao seu ID.
   - Representantes poderão visualizar apenas os registros de seus clientes.
   - O cadastro de produtos necessitará uma marca válida cadastrada anteriormente.
+  - Métodos para sincronizar marcas, produtos e clientes com o banco de dados do ERP da empresa.
   
 Tudo está sujeito a mudanças e adiçao ou remoção de funcionalidades. Caso alguém tenha interesse em utilizar o projeto, sinta-se livre para o fazer.
