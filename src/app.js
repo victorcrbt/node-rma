@@ -18,7 +18,10 @@ class App {
 
   middlewares() {
     this.server.use(express.json());
-    this.server.use('/static/images', express.static(resolve(__dirname, '..', 'temp', 'uploads')));
+    this.server.use(
+      '/static/images',
+      express.static(resolve(__dirname, '..', 'temp', 'uploads'))
+    );
   }
 
   routes() {
