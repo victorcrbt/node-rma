@@ -15,6 +15,8 @@ import SalesmanController from './app/controllers/SalesmanController';
 import ClientController from './app/controllers/ClientController';
 import ProductController from './app/controllers/ProductController';
 import RegisterController from './app/controllers/RegisterController';
+import SyncProductController from './app/controllers/SyncProductController';
+import SyncBrandController from './app/controllers/SyncBrandController';
 
 // Middlewares
 import authMiddleware from './app/middlewares/auth';
@@ -104,6 +106,12 @@ routes.get('/registers/:id', RegisterController.show);
 routes.post('/registers', RegisterController.store);
 routes.put('/registers/:id', RegisterController.update);
 routes.delete('/registers/:id', RegisterController.delete);
+
+/**
+ * Sincronização com banco de dados
+ */
+routes.get('/sync/products', SyncProductController.sync);
+routes.get('/sync/brands', SyncBrandController.sync);
 
 /**
  * Arquivos
