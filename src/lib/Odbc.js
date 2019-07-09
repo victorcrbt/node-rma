@@ -13,7 +13,7 @@ class Odbc {
       try {
         const response = await connection.query(sql);
 
-        return console.log(response);
+        return response;
       } catch (err) {
         return console.log(err);
       }
