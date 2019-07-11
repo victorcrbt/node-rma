@@ -17,6 +17,7 @@ import ProductController from './app/controllers/ProductController';
 import RegisterController from './app/controllers/RegisterController';
 import SyncProductController from './app/controllers/SyncProductController';
 import SyncBrandController from './app/controllers/SyncBrandController';
+import SyncClientsController from './app/controllers/SyncClientsController';
 
 // Middlewares
 import authMiddleware from './app/middlewares/auth';
@@ -112,6 +113,7 @@ routes.delete('/registers/:id', RegisterController.delete);
  */
 routes.get('/sync/products', SyncProductController.sync);
 routes.get('/sync/brands', SyncBrandController.sync);
+routes.get('/sync/clients', SyncClientsController.sync);
 
 /**
  * Arquivos
