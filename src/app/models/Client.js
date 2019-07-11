@@ -12,8 +12,7 @@ class Client extends Model {
       zip_code: Sequelize.STRING,
       city: Sequelize.STRING,
       state: Sequelize.STRING,
-      area_code: Sequelize.INTEGER,
-      phone_number: Sequelize.INTEGER,
+      phone: Sequelize.STRING,
       email: Sequelize.STRING,
     }, {
       sequelize,
