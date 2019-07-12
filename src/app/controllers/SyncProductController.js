@@ -23,12 +23,12 @@ class SyncProductController {
 
           if (brand && brand.description !== description) {
             await brand.update({
-              description,
+              description: description.trim(),
             });
           } else if (!brand) {
             await Brand.create({
               id,
-              description,
+              description: description.trim(),
             });
           }
         })
@@ -51,16 +51,19 @@ class SyncProductController {
         products.map(async ({ id, brand_id, description, unit, ncm }) => {
           const product = await Product.findByPk(id);
 
-          if (product && product.description !== description) {
+          if (product) {
             await product.update({
-              description,
+              brand_id,
+              description: description.trim(),
+              unit: unit.trim(),
+              ncm,
             });
           } else if (!product) {
             await Product.create({
               id,
               brand_id: brand_id === 0 ? 98 : brand_id,
-              description,
-              unit,
+              description: description.trim(),
+              unit: unit.trim(),
               ncm,
             });
           }
