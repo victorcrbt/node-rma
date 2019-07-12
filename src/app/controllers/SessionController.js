@@ -8,8 +8,8 @@ import User from '../models/User';
 class SessionController {
   async store(req, res) {
     const validationSchema = yup.object().shape({
-      email: yup.string().required("O e-mail não pode estar em branco."),
-      password: yup.string().required("A senha não pode estar em branco.")
+      email: yup.string().required('O e-mail não pode estar em branco.'),
+      password: yup.string().required('A senha não pode estar em branco.'),
     });
 
     // Validação dos campos

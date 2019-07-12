@@ -1,3 +1,4 @@
+import * as yup from 'yup';
 import { parse, startOfDay, endOfDay } from 'date-fns';
 import { Op } from 'sequelize';
 
@@ -266,6 +267,49 @@ class RegisterController {
   }
 
   async store(req, res) {
+    const validationSchema = yup.object().shape({
+      client_id: yup
+        .number()
+        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
+        .required('O cliente é obrigatório.'),
+      warranty_type_id: yup
+        .number()
+        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
+        .required('O tipo de garantia é obrigatório.'),
+      product_id: yup
+        .number()
+        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
+        .required('O produto é obrigatório.'),
+      entry_invoice: yup
+        .number()
+        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
+        .required('A nota de entrada é obrigatória.'),
+      delivery_cost: yup.number(),
+      repair_cost: yup.number(),
+      exchange_value: yup.number(),
+      register_observations: yup.string(),
+      serial_number: yup.string(),
+    });
+
+    try {
+      await validationSchema.validate(req.body, {
+        abortEarly: false,
+      });
+    } catch (err) {
+      const errors = [];
+
+      err.inner.map(error => {
+        const infos = {
+          field: error.path,
+          error: error.message,
+        };
+
+        errors.push(infos);
+      });
+
+      return res.status(400).json({ error: errors });
+    }
+
     /**
      * Verifica se o usuário é um administrador ou funcionário comum.
      */
@@ -339,6 +383,36 @@ class RegisterController {
   }
 
   async update(req, res) {
+    const validationSchema = yup.object().shape({
+      warranty_type_id: yup
+        .number()
+        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.'),
+      status_id: yup
+        .number()
+        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.'),
+      delivery_cost: yup.number(),
+      repair_cost: yup.number(),
+      exchange_value: yup.number(),
+      register_observations: yup.string(),
+    });
+
+    try {
+      await validationSchema.validate(req.body, {
+        abortEarly: false,
+      });
+    } catch (err) {
+      const errors = [];
+
+      err.inner.map(error => {
+        const infos = {
+          field: error.path,
+          error: error.message,
+        };
+
+        errors.push(infos);
+      });
+    }
+
     /**
      * Verifica se o usuário é administrador ou funcionário comum.
      */

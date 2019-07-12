@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import * as yup from 'yup';
 
 import Product from '../models/Product';
 import User from '../models/User';
@@ -54,6 +55,44 @@ class ProductController {
   }
 
   async store(req, res) {
+    const validationSchema = yup.object().shape({
+      id: yup
+        .number()
+        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
+        .required('O código do produto é obrigatório.'),
+      brand_id: yup
+        .number()
+        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
+        .required('A marca é obrigatória.'),
+      description: yup
+        .string()
+        .required('A descrição do produto é obrigatória.'),
+      unit: yup.string().required('A unidade é obrigatória.'),
+      ncm: yup
+        .number()
+        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
+        .required('O NCM é obrigatório.'),
+    });
+
+    try {
+      await validationSchema.validate(req.body, {
+        abortEarly: false,
+      });
+    } catch (err) {
+      const errors = [];
+
+      err.inner.map(error => {
+        const infos = {
+          field: error.path,
+          error: error.message,
+        };
+
+        errors.push(infos);
+      });
+
+      return res.status(400).json({ error: errors });
+    }
+
     /**
      * Verifica se o usuário é administrador ou funcionário comum.
      */
@@ -109,6 +148,38 @@ class ProductController {
   }
 
   async update(req, res) {
+    const validationSchema = yup.object().shape({
+      brand_id: yup
+        .number()
+        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.'),
+      description: yup
+        .string()
+        .required('A descrição do produto é obrigatória.'),
+      unit: yup.string(),
+      ncm: yup
+        .number()
+        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.'),
+    });
+
+    try {
+      await validationSchema.validate(req.body, {
+        abortEarly: false,
+      });
+    } catch (err) {
+      const errors = [];
+
+      err.inner.map(error => {
+        const infos = {
+          field: error.path,
+          error: error.message,
+        };
+
+        errors.push(infos);
+      });
+
+      return res.status(400).json({ error: errors });
+    }
+
     /**
      * Verifica se o usuário é administrador ou funcionário comum.
      */

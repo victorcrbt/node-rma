@@ -1,3 +1,5 @@
+import * as yup from 'yup';
+
 import Salesman from '../models/Salesman';
 import User from '../models/User';
 
@@ -47,6 +49,34 @@ class SalesmanController {
   }
 
   async store(req, res) {
+    const validationSchema = yup.object().shape({
+      id: yup
+        .number()
+        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
+        .required('O código do produto é obrigatório.'),
+      name: yup.string().required('O nome é obrigatório.'),
+      document: yup.string().required('O documento é obrigatório.'),
+    });
+
+    try {
+      await validationSchema.validate(req.body, {
+        abortEarly: false,
+      });
+    } catch (err) {
+      const errors = [];
+
+      err.inner.map(error => {
+        const infos = {
+          field: error.path,
+          error: error.message,
+        };
+
+        errors.push(infos);
+      });
+
+      return res.status(400).json({ error: errors });
+    }
+
     /**
      * Verifica se o usuário é administrador ou funcionário comum.
      */
@@ -90,6 +120,28 @@ class SalesmanController {
   }
 
   async update(req, res) {
+    const validationSchema = yup.object().shape({
+      name: yup.string(),
+      document: yup.string(),
+    });
+
+    try {
+      await validationSchema.validate(req.body, {
+        abortEarly: false,
+      });
+    } catch (err) {
+      const errors = [];
+
+      err.inner.map(error => {
+        const infos = {
+          field: error.path,
+          error: error.message,
+        };
+
+        errors.push(infos);
+      });
+    }
+
     /**
      * Verifica se o usuário é administrador ou funcionário comum.
      */
