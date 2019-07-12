@@ -22,12 +22,12 @@ class SyncProductController {
 
           if (brand && brand.description !== description) {
             await brand.update({
-              description,
+              description: description.trim(),
             });
           } else if (!brand) {
             await Brand.create({
               id,
-              description,
+              description: description.trim(),
             });
           }
         })
