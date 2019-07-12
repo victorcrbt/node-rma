@@ -52,12 +52,16 @@ class SyncProductController {
           const product = await Product.findByPk(id);
 
           if (product) {
-            await product.update({
-              brand_id,
-              description: description.trim(),
-              unit: unit.trim(),
-              ncm,
-            });
+            try {
+              await product.update({
+                brand_id: brand_id === 0 ? 98 : brand_id,
+                description: description.trim(),
+                unit: unit.trim(),
+                ncm,
+              });
+            } catch (err) {
+              return console.log(err);
+            }
           } else if (!product) {
             await Product.create({
               id,
