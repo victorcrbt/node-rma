@@ -16,6 +16,7 @@ class ClientController {
       address_number,
       city,
       state,
+      salesman_id,
     } = req.query;
 
     /**
@@ -68,6 +69,13 @@ class ClientController {
     }
 
     /**
+     * Verifica se o representante foi enviado
+     */
+    if (salesman_id) {
+      where.salesman_id = salesman_id;
+    }
+
+    /**
      * Verifica se o usuário é um administrador ou funcionário comum.
      */
     const { admin, employee, salesman, client } = await User.findByPk(
@@ -108,7 +116,9 @@ class ClientController {
     /**
      * Se o usuário for administrador e/ou funcionário comum, retorna todos os clientes.
      */
-    const clients = await Client.findAll();
+    const clients = await Client.findAll({
+      where,
+    });
 
     return res.status(200).json(clients);
   }
