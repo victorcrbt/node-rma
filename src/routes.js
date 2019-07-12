@@ -19,6 +19,7 @@ import SyncProductController from './app/controllers/SyncProductController';
 import SyncBrandController from './app/controllers/SyncBrandController';
 import SyncClientsController from './app/controllers/SyncClientsController';
 import SyncSalesmanController from './app/controllers/SyncSalesmanController';
+import DashboardController from './app/controllers/DashboardController';
 
 // Middlewares
 import authMiddleware from './app/middlewares/auth';
@@ -39,6 +40,11 @@ routes.post('/sessions', SessionController.store);
 
 // Rotas que necessitam autenticação
 routes.use(authMiddleware);
+
+/**
+ * Dashboard
+ */
+routes.get('/dashboard', DashboardController.index);
 
 /**
  * Usuários
