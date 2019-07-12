@@ -18,6 +18,7 @@ import RegisterController from './app/controllers/RegisterController';
 import SyncProductController from './app/controllers/SyncProductController';
 import SyncBrandController from './app/controllers/SyncBrandController';
 import SyncClientsController from './app/controllers/SyncClientsController';
+import SyncSalesmanController from './app/controllers/SyncSalesmanController';
 
 // Middlewares
 import authMiddleware from './app/middlewares/auth';
@@ -111,8 +112,9 @@ routes.delete('/registers/:id', RegisterController.delete);
 /**
  * Sincronização com banco de dados
  */
-routes.get('/sync/products', SyncProductController.sync);
 routes.get('/sync/brands', SyncBrandController.sync);
+routes.get('/sync/products', SyncProductController.sync);
+routes.get('/sync/salesmen', SyncSalesmanController.sync);
 routes.get('/sync/clients', SyncClientsController.sync);
 
 /**
