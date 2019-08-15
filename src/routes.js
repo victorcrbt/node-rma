@@ -21,6 +21,8 @@ import SyncClientsController from './app/controllers/SyncClientsController';
 import SyncSalesmanController from './app/controllers/SyncSalesmanController';
 import DashboardController from './app/controllers/DashboardController';
 
+import SyncRegisterController from './app/controllers/SyncRegisterController';
+
 // Middlewares
 import authMiddleware from './app/middlewares/auth';
 
@@ -128,5 +130,7 @@ routes.get('/sync/clients', SyncClientsController.sync);
  * Arquivos
  */
 routes.post('/files', upload.single('file'), FileController.store);
+
+routes.post('/sync/registers', SyncRegisterController.store);
 
 export default routes;
