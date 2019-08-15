@@ -10,7 +10,7 @@ class ProductController {
     const where = {};
     const numberRegex = /^[0-9]*$/; // Testa se o parâmetro enviado contém somente números.
 
-    const { product, id, description, brand_id } = req.query;    
+    const { product, id, description, brand_id } = req.query;
 
     if (product) {
       where[Op.or] = [
@@ -56,8 +56,8 @@ class ProductController {
           model: Brand,
           as: 'brand',
           attributes: ['description'],
-        }
-      ]
+        },
+      ],
     });
 
     return res.status(200).json(products);
@@ -71,8 +71,8 @@ class ProductController {
           model: Brand,
           as: 'brand',
           attributes: ['description'],
-        }
-      ]
+        },
+      ],
     });
 
     if (!product) {
@@ -85,44 +85,6 @@ class ProductController {
   }
 
   async store(req, res) {
-    const validationSchema = yup.object().shape({
-      id: yup
-        .number()
-        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
-        .required('O código do produto é obrigatório.'),
-      brand_id: yup
-        .number()
-        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
-        .required('A marca é obrigatória.'),
-      description: yup
-        .string()
-        .required('A descrição do produto é obrigatória.'),
-      unit: yup.string().required('A unidade é obrigatória.'),
-      ncm: yup
-        .number()
-        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
-        .required('O NCM é obrigatório.'),
-    });
-
-    try {
-      await validationSchema.validate(req.body, {
-        abortEarly: false,
-      });
-    } catch (err) {
-      const errors = [];
-
-      err.inner.map(error => {
-        const infos = {
-          field: error.path,
-          error: error.message,
-        };
-
-        errors.push(infos);
-      });
-
-      return res.status(400).json({ error: errors });
-    }
-
     /**
      * Verifica se o usuário é administrador ou funcionário comum.
      */
@@ -178,38 +140,6 @@ class ProductController {
   }
 
   async update(req, res) {
-    const validationSchema = yup.object().shape({
-      brand_id: yup
-        .number()
-        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.'),
-      description: yup
-        .string()
-        .required('A descrição do produto é obrigatória.'),
-      unit: yup.string(),
-      ncm: yup
-        .number()
-        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.'),
-    });
-
-    try {
-      await validationSchema.validate(req.body, {
-        abortEarly: false,
-      });
-    } catch (err) {
-      const errors = [];
-
-      err.inner.map(error => {
-        const infos = {
-          field: error.path,
-          error: error.message,
-        };
-
-        errors.push(infos);
-      });
-
-      return res.status(400).json({ error: errors });
-    }
-
     /**
      * Verifica se o usuário é administrador ou funcionário comum.
      */

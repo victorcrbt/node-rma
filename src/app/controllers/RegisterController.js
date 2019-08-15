@@ -1,4 +1,3 @@
-import * as yup from 'yup';
 import { parse, startOfDay, endOfDay } from 'date-fns';
 import { Op } from 'sequelize';
 
@@ -159,7 +158,6 @@ class RegisterController {
 
       return res.status(200).json(registers);
     } catch (err) {
-      console.log(err);
       return res.status(500).json({ error: 'Erro interno no servidor.' });
     }
   }
@@ -250,53 +248,11 @@ class RegisterController {
 
       return res.status(200).json(register);
     } catch (err) {
-      console.log(err);
       return res.status(500).json({ error: 'Erro interno no servidor.' });
     }
   }
 
   async store(req, res) {
-    const validationSchema = yup.object().shape({
-      client_id: yup
-        .number()
-        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
-        .required('O cliente é obrigatório.'),
-      warranty_type_id: yup
-        .number()
-        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
-        .required('O tipo de garantia é obrigatório.'),
-      product_id: yup
-        .number()
-        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
-        .required('O produto é obrigatório.'),
-      entry_invoice: yup
-        .number()
-        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.')
-        .required('A nota de entrada é obrigatória.'),
-      entry_date: yup.date().required('A data de entrada é obrigatória'),
-      register_observations: yup.string(),
-      serial_number: yup.string(),
-    });
-
-    try {
-      await validationSchema.validate(req.body, {
-        abortEarly: false,
-      });
-    } catch (err) {
-      const errors = [];
-
-      err.inner.map(error => {
-        const infos = {
-          field: error.path,
-          error: error.message,
-        };
-
-        errors.push(infos);
-      });
-
-      return res.status(400).json({ error: errors });
-    }
-
     /**
      * Verifica se o usuário é um administrador ou funcionário comum.
      */
@@ -363,43 +319,11 @@ class RegisterController {
 
       return res.json(register);
     } catch (err) {
-      console.log(err);
-
       return res.status(400).json(err);
     }
   }
 
   async update(req, res) {
-    const validationSchema = yup.object().shape({
-      warranty_type_id: yup
-        .number()
-        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.'),
-      status_id: yup
-        .number()
-        .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.'),
-      delivery_cost: yup.number(),
-      repair_cost: yup.number(),
-      exchange_value: yup.number(),
-      register_observations: yup.string(),
-    });
-
-    try {
-      await validationSchema.validate(req.body, {
-        abortEarly: false,
-      });
-    } catch (err) {
-      const errors = [];
-
-      err.inner.map(error => {
-        const infos = {
-          field: error.path,
-          error: error.message,
-        };
-
-        errors.push(infos);
-      });
-    }
-
     /**
      * Verifica se o usuário é administrador ou funcionário comum.
      */
@@ -472,13 +396,9 @@ class RegisterController {
 
         return res.status(200).json(register);
       } catch (error) {
-        console.log(error);
-
         return res.status(500).json({ error: 'Erro interno no servidor.' });
       }
     } catch (error) {
-      console.log(error);
-
       return res.status(500).json({ error: 'Erro interno no servidor.' });
     }
   }
@@ -509,13 +429,9 @@ class RegisterController {
 
         return res.status(200).json({ msg: 'Registro deletado com sucesso.' });
       } catch (error) {
-        console.log(error);
-
         return res.status(500).json({ error: 'Erro interno no servidor.' });
       }
     } catch (error) {
-      console.log(error);
-
       return res.status(500).json({ error: 'Erro interno no servidor.' });
     }
   }

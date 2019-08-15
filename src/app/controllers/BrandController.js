@@ -1,5 +1,4 @@
 import { Op } from 'sequelize';
-import * as yup from 'yup';
 
 import Brand from '../models/Brand';
 import User from '../models/User';
@@ -32,40 +31,13 @@ class BrandController {
     return res.status(200).json(brands);
   }
 
-  async show (req, res) {
+  async show(req, res) {
     const brand = await Brand.findByPk(req.params.id);
 
     return res.status(200).json(brand);
   }
 
   async store(req, res) {
-    const validationSchema = yup.object().shape({
-      id: yup
-        .number()
-        .max(Number.MAX_SAFE_INTEGER, 'O número digitado não é válido.')
-        .required('O código é obrigatório.'),
-      description: yup.string().required('O nome da marca é obrigatória.'),
-    });
-
-    try {
-      await validationSchema.validate(req.body, {
-        abortEarly: false,
-      });
-    } catch (err) {
-      const errors = [];
-
-      err.inner.map(error => {
-        const infos = {
-          field: error.path,
-          error: error.message,
-        };
-
-        errors.push(infos);
-      });
-
-      return res.status(400).json({ error: errors });
-    }
-
     /**
      * Verifica se o usuário é um administrador ou funcionário.
      */
@@ -109,32 +81,6 @@ class BrandController {
   }
 
   async update(req, res) {
-    const validationSchema = yup.object().shape({
-      id: yup
-        .number()
-        .max(Number.MAX_SAFE_INTEGER, 'O número digitado não é válido.'),
-      description: yup.string(),
-    });
-
-    try {
-      await validationSchema.validate(req.body, {
-        abortEarly: false,
-      });
-    } catch (err) {
-      const errors = [];
-
-      err.inner.map(error => {
-        const infos = {
-          field: error.path,
-          error: error.message,
-        };
-
-        errors.push(infos);
-      });
-
-      return res.status(400).json({ error: errors });
-    }
-
     /**
      * Verifica se o usuário é um administrador ou funcionário.
      */
