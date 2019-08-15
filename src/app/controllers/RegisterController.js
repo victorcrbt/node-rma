@@ -111,13 +111,11 @@ class RegisterController {
         where,
         include: [
           {
-            model: User,
-            as: 'user',
+            association: 'user',
             attributes: ['id', 'name'],
           },
           {
-            model: Client,
-            as: 'client',
+            association: 'client',
             attributes: [
               'id',
               'company_name',
@@ -133,30 +131,25 @@ class RegisterController {
             ],
             include: [
               {
-                model: Salesman,
-                as: 'salesman',
+                association: 'salesman',
                 attributes: ['id', 'name'],
               },
             ],
           },
           {
-            model: WarrantyType,
-            as: 'warranty_type',
+            association: 'warranty_type',
             attributes: ['id', 'description'],
           },
           {
-            model: Status,
-            as: 'status',
+            association: 'status',
             attributes: ['id', 'description'],
           },
           {
-            model: Product,
-            as: 'product',
+            association: 'product',
             attributes: ['id', 'description', 'unit'],
             include: [
               {
-                model: Brand,
-                as: 'brand',
+                association: 'brand',
                 attributes: ['id', 'description'],
               },
             ],
