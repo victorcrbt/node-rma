@@ -8,6 +8,8 @@ import validateUserStore from './app/validators/UserStore';
 import validateUserUpdate from './app/validators/UserUpdate';
 
 import SessionController from './app/controllers/SessionController';
+import validateSessionStore from './app/validators/SessionStore';
+
 import DashboardController from './app/controllers/DashboardController';
 import StatusController from './app/controllers/StatusController';
 import WarrantyTypeController from './app/controllers/WarrantyTypeController';
@@ -53,7 +55,7 @@ const upload = multer(multerConfig);
 // Rotas sem autenticação
 routes.post('/users', validateUserStore, UserController.store);
 
-routes.post('/sessions', SessionController.store);
+routes.post('/sessions', validateSessionStore, SessionController.store);
 
 // Rotas que necessitam autenticação
 routes.use(authMiddleware);
