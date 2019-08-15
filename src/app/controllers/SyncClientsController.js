@@ -60,7 +60,7 @@ class SyncClientsController {
     const saveClientsToDatabase = clients => {
       return Promise.all(
         clients.map(async client => {
-          const {
+          let {
             id,
             salesman_id,
             company_name,
@@ -103,10 +103,12 @@ class SyncClientsController {
 
           const clientExists = await Client.findByPk(id);
 
+          console.log(salesman_id);
+
           if (clientExists) {
             await clientExists.update({
               id,
-              salesman_id,
+              salesman_id: salesman_id === null ? 6 : salesman_id,
               company_name: company_name.trim(),
               address: address.trim(),
               address_number,
@@ -126,7 +128,7 @@ class SyncClientsController {
           } else if (!clientExists) {
             await Client.create({
               id,
-              salesman_id,
+              salesman_id: salesman_id === null ? 6 : salesman_id,
               company_name: company_name.trim(),
               address: address.trim(),
               address_number,
