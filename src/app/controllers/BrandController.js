@@ -5,20 +5,14 @@ import User from '../models/User';
 
 class BrandController {
   async index(req, res) {
-    const where = {};
-
     const { id, description } = req.query;
 
-    /**
-     * Verifica se o id foi enviado na query
-     */
+    const where = {};
+
     if (id) {
       where.id = id;
     }
 
-    /**
-     * Verifica se a descrição foi enviada na query
-     */
     if (description) {
       where.description = { [Op.iLike]: `%${description}%` };
     }
@@ -38,12 +32,11 @@ class BrandController {
   }
 
   async store(req, res) {
-    /**
-     * Verifica se o usuário é um administrador ou funcionário.
-     */
-    const { admin, employee } = await User.findByPk(req.userId);
+    const { admin: isAdmin, employee: isEmployee } = await User.findByPk(
+      req.userId
+    );
 
-    if (!employee && !admin) {
+    if (!isEmployee && !isAdmin) {
       return res
         .status(401)
         .json({ error: 'Você não tem permissão para realizar esta ação.' });
@@ -51,18 +44,12 @@ class BrandController {
 
     const { id, description } = req.body;
 
-    /**
-     * Verifica se o ID  já foi utilizado.
-     */
     const usedId = await Brand.findByPk(id);
 
     if (usedId) {
       return res.status(400).json({ error: 'ID já utilizado.' });
     }
 
-    /**
-     * Verifica se já existe uma marca com a mesma descrição.
-     */
     const usedDescription = await Brand.findOne({
       where: {
         description,
@@ -81,29 +68,25 @@ class BrandController {
   }
 
   async update(req, res) {
-    /**
-     * Verifica se o usuário é um administrador ou funcionário.
-     */
-    const { admin, employee } = await User.findByPk(req.userId);
+    const { admin: isAdmin, employee: isEmployee } = await User.findByPk(
+      req.userId
+    );
 
-    if (!employee && !admin) {
+    if (!isEmployee && !isAdmin) {
       return res
         .status(401)
         .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
-    const { description } = req.body;
-
     const brand = await Brand.findByPk(req.params.id);
 
-    /**
-     * Verifica se a marca existe.
-     */
     if (!brand) {
       return res
         .status(404)
         .json({ error: 'Não foi encontrado uma marca com o ID informado.' });
     }
+
+    const { description } = req.body;
 
     const usedDescription = await Brand.findOne({
       where: {
@@ -125,12 +108,11 @@ class BrandController {
   }
 
   async delete(req, res) {
-    /**
-     * Verifica se o usuário é um administrador ou funcionário.
-     */
-    const { admin, employee } = await User.findByPk(req.userId);
+    const { admin: isAdmin, employee: isEmployee } = await User.findByPk(
+      req.userId
+    );
 
-    if (!employee && !admin) {
+    if (!isEmployee && !isAdmin) {
       return res
         .status(401)
         .json({ error: 'Você não tem permissão para realizar esta ação.' });
