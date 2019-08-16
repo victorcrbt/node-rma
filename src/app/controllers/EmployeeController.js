@@ -1,16 +1,13 @@
-import * as yup from 'yup';
-
 import Employee from '../models/Employee';
 import User from '../models/User';
 
 class EmployeeController {
   async index(req, res) {
-    /**
-     * Verifica se o usuário é administrador ou funcionário comum.
-     */
-    const { admin, employee } = await User.findByPk(req.userId);
+    const { admin: isAdmin, employee: isEmployee } = await User.findByPk(
+      req.userId
+    );
 
-    if (!admin && !employee) {
+    if (!isAdmin && !isEmployee) {
       return res
         .status(401)
         .json({ error: 'Você não tem permissão para realizar esta ação.' });
@@ -24,54 +21,49 @@ class EmployeeController {
   }
 
   async show(req, res) {
-    /**
-     * Verifica se o usuário é administrador ou funcionário comum.
-     */
-    const { admin, employee } = await User.findByPk(req.userId);
+    const { admin: isAdmin, employee: isEmployee } = await User.findByPk(
+      req.userId
+    );
 
-    if (!admin && !employee) {
+    if (!isAdmin && !isEmployee) {
       return res
         .status(401)
         .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
-    const emp = await Employee.findByPk(req.params.id, {
+    const employee = await Employee.findByPk(req.params.id, {
       attributes: ['id', 'name', 'document'],
     });
 
-    if (!emp) {
+    if (!employee) {
       return res.status(404).json({
         error: 'Não foi encontrado um funcionário com o ID informado.',
       });
     }
 
-    return res.status(200).json(emp);
+    return res.status(200).json(employee);
   }
 
   async store(req, res) {
-    /**
-     * Verifica se o usuário é administrador ou funcionário comum.
-     */
-    const { admin, employee } = await User.findByPk(req.userId);
+    const { admin: isAdmin, employee: isEmployee } = await User.findByPk(
+      req.userId
+    );
 
-    if (!admin && !employee) {
+    if (!isAdmin && !isEmployee) {
       return res
         .status(401)
         .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
-    /**
-     * Verifica se já existe um funcionário com o documento informado.
-     */
-    const documentExists = await Employee.findOne({
+    const documentoAlreadyUsed = await Employee.findOne({
       where: {
         document: req.body.document,
       },
     });
 
-    if (documentExists) {
+    if (documentoAlreadyUsed) {
       return res.status(400).json({
-        error: `O documento já está em uso pelo funcionário ${documentExists.id}.`,
+        error: `O documento já está em uso pelo funcionário ${documentoAlreadyUsed.id}.`,
       });
     }
 
@@ -81,64 +73,59 @@ class EmployeeController {
   }
 
   async update(req, res) {
-    /**
-     * Verifica se o usuário é administrador ou funcionário comum.
-     */
-    const { admin, employee } = await User.findByPk(req.userId);
+    const { admin: isAdmin, employee: isEmployee } = await User.findByPk(
+      req.userId
+    );
 
-    if (!admin && !employee) {
+    if (!isAdmin && !isEmployee) {
       return res
         .status(401)
         .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
-    const emp = await Employee.findByPk(req.params.id);
+    const employee = await Employee.findByPk(req.params.id);
 
-    const { document } = req.body;
-
-    /**
-     * Verifica se o documento já foi utilizado por outro funcionário.
-     */
-    const documentExists = await Employee.findOne({
+    const documentAlreadyUsed = await Employee.findOne({
       where: {
-        document,
+        document: req.body.document,
       },
     });
 
-    if (documentExists && document !== emp.document) {
+    if (documentAlreadyUsed && req.body.document !== employee.document) {
       return res.status(400).json({
-        error: `O documento já está em uso pelo funcionário ${documentExists.id}.`,
+        error: `O documento já está em uso pelo funcionário ${documentAlreadyUsed.id}.`,
       });
     }
 
-    emp.update(req.body);
+    employee.update(req.body);
 
-    return res.json(emp);
+    return res.json(employee);
   }
 
   async delete(req, res) {
-    /**
-     * Verifica se o usuário é administrador ou funcionário comum.
-     */
-    const { admin, employee } = await User.findByPk(req.userId);
+    const { admin: isAdmin, employee: isEmployee } = await User.findByPk(
+      req.userId
+    );
 
-    if (!admin && !employee) {
+    if (!isAdmin && !isEmployee) {
       return res
         .status(401)
         .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
-    const emp = await Employee.findByPk(req.params.id);
+    const employee = await Employee.findByPk(req.params.id);
 
-    if (!emp) {
+    if (!employee) {
       return res.status(404).json({
         error: 'Não foi encontrado um funcionário com o ID informado.',
       });
     }
 
-    emp.destroy();
+    employee.destroy();
 
-    return res.status(200).json({ msg: 'Funcionário deletado com sucesso.' });
+    return res
+      .status(200)
+      .json({ message: 'Funcionário deletado com sucesso.' });
   }
 }
 
