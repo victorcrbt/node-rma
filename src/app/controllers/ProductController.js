@@ -1,5 +1,4 @@
 import { Op } from 'sequelize';
-import * as yup from 'yup';
 
 import Product from '../models/Product';
 import User from '../models/User';
@@ -27,23 +26,14 @@ class ProductController {
       ];
     }
 
-    /**
-     * Verifica se o id foi enviado
-     */
     if (id) {
       where.id = id;
     }
 
-    /**
-     * Verifica se a descrição foi enviada
-     */
     if (description) {
       where.description = { [Op.iLike]: `%${description}%` };
     }
 
-    /**
-     * Verifica se a marca foi enviada
-     */
     if (brand_id) {
       where.brand_id = brand_id;
     }
@@ -85,9 +75,6 @@ class ProductController {
   }
 
   async store(req, res) {
-    /**
-     * Verifica se o usuário é administrador ou funcionário comum.
-     */
     const { admin, employee } = await User.findByPk(req.userId);
 
     if (!admin && !employee) {
@@ -96,33 +83,24 @@ class ProductController {
         .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
-    /**
-     * Verifica e o ID já foi utilizado.
-     */
-    const idExists = await Product.findByPk(req.body.id);
+    const idAlreadyUsed = await Product.findByPk(req.body.id);
 
-    if (idExists) {
+    if (idAlreadyUsed) {
       return res.status(400).json({ error: 'O ID já está em uso.' });
     }
 
-    /**
-     * Verifica se existe outro produto com a mesma descrição.
-     */
-    const descriptionExists = await Product.findOne({
+    const descriptionAlreadyUsed = await Product.findOne({
       where: {
         description: req.body.description,
       },
     });
 
-    if (descriptionExists) {
+    if (descriptionAlreadyUsed) {
       return res.status(400).json({
-        error: `Descriçao já utilizada no produto ${descriptionExists.id}.`,
+        error: `Descriçao já utilizada no produto ${descriptionAlreadyUsed.id}.`,
       });
     }
 
-    /**
-     * Verifica se a marca está cadastrada.
-     */
     const brandExists = await Brand.findByPk(req.body.brand_id);
 
     if (!brandExists) {
@@ -131,18 +109,12 @@ class ProductController {
         .json({ error: 'A marca informada não está cadastrada.' });
     }
 
-    /**
-     * Insere o produto no banco de dados.
-     */
     const product = await Product.create(req.body);
 
     return res.status(201).json(product);
   }
 
   async update(req, res) {
-    /**
-     * Verifica se o usuário é administrador ou funcionário comum.
-     */
     const { admin, employee } = await User.findByPk(req.userId);
 
     if (!admin && !employee) {
@@ -151,20 +123,14 @@ class ProductController {
         .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
-    /**
-     * Remove o ID dos campos que podem ser atualizados.
-     */
     let updateFields = {};
 
     Object.keys(req.body).map(key => {
-      if (key !== 'id') {
-        updateFields = { ...updateFields, [key]: req.body[key] };
-      }
+      if (key === 'id') return;
+
+      updateFields = { ...updateFields, [key]: req.body[key] };
     });
 
-    /**
-     * Verifica se o produto existe.
-     */
     const product = await Product.findByPk(req.params.id);
 
     if (!product) {
@@ -173,9 +139,6 @@ class ProductController {
         .json({ error: 'Não foi encontrado um produto com o ID informado.' });
     }
 
-    /**
-     * Verifica se a marca está cadastrada.
-     */
     const brandExists = await Brand.findByPk(updateFields.brand_id);
 
     if (updateFields.brand_id && !brandExists) {
@@ -184,18 +147,12 @@ class ProductController {
         .json({ error: 'A marca informada não está cadastrada.' });
     }
 
-    /**
-     * Salva as atualizações.
-     */
     await product.update(req.body);
 
     return res.json(product);
   }
 
   async delete(req, res) {
-    /**
-     * Verifica se o usuário é administrador ou funcionário comum.
-     */
     const { admin, employee } = await User.findByPk(req.userId);
 
     if (!admin && !employee) {
@@ -214,7 +171,7 @@ class ProductController {
 
     await product.destroy();
 
-    return res.status(200).json({ msg: 'Produto deletado com sucesso.' });
+    return res.status(200).json({ message: 'Produto deletado com sucesso.' });
   }
 }
 
