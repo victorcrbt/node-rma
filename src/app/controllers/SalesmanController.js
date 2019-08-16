@@ -1,4 +1,3 @@
-import * as yup from 'yup';
 import { Op } from 'sequelize';
 
 import Salesman from '../models/Salesman';
@@ -6,6 +5,14 @@ import User from '../models/User';
 
 class SalesmanController {
   async index(req, res) {
+    const { admin, employee } = await User.findByPk(req.userId);
+
+    if (!admin && !employee) {
+      return res
+        .status(401)
+        .json({ error: 'Você não tem permissão para realizar esta ação.' });
+    }
+
     const where = {};
 
     if (req.query.id) {
@@ -20,17 +27,6 @@ class SalesmanController {
       where.document = { [Op.iLike]: `%${req.query.document}%` };
     }
 
-    /**
-     * Verifica se o usuário é administrador ou funcionário comum.
-     */
-    const { admin, employee } = await User.findByPk(req.userId);
-
-    if (!admin && !employee) {
-      return res
-        .status(401)
-        .json({ error: 'Você não tem permissão para realizar esta ação.' });
-    }
-
     const salesmen = await Salesman.findAll({
       attributes: ['id', 'name', 'document'],
       where,
@@ -40,9 +36,6 @@ class SalesmanController {
   }
 
   async show(req, res) {
-    /**
-     * Verifica se o usuário é administrador ou funcionário comum.
-     */
     const { admin, employee } = await User.findByPk(req.userId);
 
     if (!admin && !employee) {
@@ -65,9 +58,6 @@ class SalesmanController {
   }
 
   async store(req, res) {
-    /**
-     * Verifica se o usuário é administrador ou funcionário comum.
-     */
     const { admin, employee } = await User.findByPk(req.userId);
 
     if (!admin && !employee) {
@@ -76,29 +66,23 @@ class SalesmanController {
         .json({ error: 'Você não tem permissão para realizar esta ação.' });
     }
 
-    /**
-     * Verifica se o ID já foi utilizado.
-     */
-    const idExists = await Salesman.findByPk(req.body.id);
+    const idAlreadyUsed = await Salesman.findByPk(req.body.id);
 
-    if (idExists) {
+    if (idAlreadyUsed) {
       return res.status(400).json({
         error: `O ID já está em uso.`,
       });
     }
 
-    /**
-     * Verifica se já existe um funcionário com o documento informado.
-     */
-    const documentExists = await Salesman.findOne({
+    const documentAlreadyUsed = await Salesman.findOne({
       where: {
         document: req.body.document,
       },
     });
 
-    if (documentExists) {
+    if (documentAlreadyUsed) {
       return res.status(400).json({
-        error: `O documento já está em uso pelo representante ${documentExists.id}.`,
+        error: `O documento já está em uso pelo representante ${documentAlreadyUsed.id}.`,
       });
     }
 
@@ -108,9 +92,6 @@ class SalesmanController {
   }
 
   async update(req, res) {
-    /**
-     * Verifica se o usuário é administrador ou funcionário comum.
-     */
     const { admin, employee } = await User.findByPk(req.userId);
 
     if (!admin && !employee) {
@@ -123,9 +104,6 @@ class SalesmanController {
 
     const { document, name } = req.body;
 
-    /**
-     * Verifica se o documento já foi utilizado por outro funcionário.
-     */
     const documentExists = await Salesman.findOne({
       where: {
         document,
@@ -147,9 +125,6 @@ class SalesmanController {
   }
 
   async delete(req, res) {
-    /**
-     * Verifica se o usuário é administrador ou funcionário comum.
-     */
     const { admin, employee } = await User.findByPk(req.userId);
 
     if (!admin && !employee) {
