@@ -60,6 +60,7 @@ routes.post('/users', validateUserStore, UserController.store);
 routes.post('/sessions', validateSessionStore, SessionController.store);
 
 routes.post('/reset_password', ResetPasswordController.store);
+routes.post('/reset_password/:token', ResetPasswordController.update);
 
 // Rotas que necessitam autenticação
 routes.use(authMiddleware);

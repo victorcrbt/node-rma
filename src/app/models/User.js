@@ -16,6 +16,8 @@ class User extends Model {
         client: Sequelize.BOOLEAN,
         reference_id: Sequelize.INTEGER,
         avatar_id: Sequelize.INTEGER,
+        reset_token: Sequelize.STRING,
+        token_expiration: Sequelize.DATE,
       },
       {
         sequelize,
