@@ -42,6 +42,8 @@ import SyncProductController from './app/controllers/SyncProductController';
 import SyncBrandController from './app/controllers/SyncBrandController';
 import SyncClientsController from './app/controllers/SyncClientsController';
 import SyncSalesmanController from './app/controllers/SyncSalesmanController';
+
+import ResetPasswordController from './app/controllers/ResetPasswordController';
 import FileController from './app/controllers/FileController';
 
 import SyncRegisterController from './app/controllers/SyncRegisterController';
@@ -56,6 +58,8 @@ const upload = multer(multerConfig);
 routes.post('/users', validateUserStore, UserController.store);
 
 routes.post('/sessions', validateSessionStore, SessionController.store);
+
+routes.post('/reset_password', ResetPasswordController.store);
 
 // Rotas que necessitam autenticação
 routes.use(authMiddleware);
