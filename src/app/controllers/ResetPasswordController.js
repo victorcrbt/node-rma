@@ -33,10 +33,26 @@ class ResetPasswordController {
 
   async update(req, res) {
     const { token } = req.params;
+    const { password } = req.body;
 
     const user = await User.findOne({ where: { reset_token: token } });
 
-    return res.status(200).json(user);
+    if (!user) {
+      return res.status(404).json({
+        error: 'Não foi encontrado uma solicitação com o token indicado.',
+      });
+    }
+
+    if (user.token_expiration < new Date()) {
+      return res.status(400).json({
+        error:
+          'O token enviado está expirado. Favor solicitar uma nova alteração de senha.',
+      });
+    }
+
+    user.update({ password, reset_token: null, token_expiration: null });
+
+    return res.status(200).json({ message: 'Senha alterada com sucesso!' });
   }
 }
 
