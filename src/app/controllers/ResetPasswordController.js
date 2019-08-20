@@ -3,6 +3,8 @@ import { addDays } from 'date-fns';
 
 import User from '../models/User';
 
+import Mail from '../../lib/Mail';
+
 class ResetPasswordController {
   async store(req, res) {
     const { email } = req.body;
@@ -15,15 +17,29 @@ class ResetPasswordController {
       });
     }
 
-    const expirtaionToken = await crypto
+    const token = await crypto
       .createHash('md5')
       .update(`${user.email}${new Date()}}`)
       .digest('hex');
 
-    user.reset_token = expirtaionToken;
+    user.reset_token = token;
     user.token_expiration = addDays(new Date(), 1);
 
     user.save();
+
+    try {
+      await Mail.sendMail({
+        to: `${user.name} <${user.email}>`,
+        subject: 'Alteração de senha',
+        template: 'recoveryPassword',
+        context: {
+          name: user.name,
+          token,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+    }
 
     return res.json({
       message:
