@@ -3,7 +3,8 @@ import { addDays } from 'date-fns';
 
 import User from '../models/User';
 
-import Mail from '../../lib/Mail';
+import Queue from '../../lib/Queue';
+import RecoveryPasswordMail from '../jobs/RecoveryPasswordMail';
 
 class ResetPasswordController {
   async store(req, res) {
@@ -27,19 +28,7 @@ class ResetPasswordController {
 
     user.save();
 
-    try {
-      await Mail.sendMail({
-        to: `${user.name} <${user.email}>`,
-        subject: 'Alteração de senha',
-        template: 'recoveryPassword',
-        context: {
-          name: user.name,
-          token,
-        },
-      });
-    } catch (err) {
-      console.log(err);
-    }
+    await Queue.add(RecoveryPasswordMail.key, { user, token });
 
     return res.json({
       message:
