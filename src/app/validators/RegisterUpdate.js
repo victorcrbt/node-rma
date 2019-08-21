@@ -8,9 +8,6 @@ export default async (req, res, next) => {
     status_id: yup
       .number()
       .max(Number.MAX_SAFE_INTEGER, 'O número informado não é válido.'),
-    delivery_cost: yup.number().required('e ae'),
-    repair_cost: yup.number(),
-    exchange_value: yup.number(),
     register_observations: yup.string(),
   });
 

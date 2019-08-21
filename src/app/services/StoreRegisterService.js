@@ -5,6 +5,9 @@ import Client from '../models/Client';
 import Product from '../models/Product';
 import Register from '../models/Register';
 
+import Queue from '../../lib/Queue';
+import ProductExchangeMail from '../jobs/ProductExchangeMail';
+
 class StoreRegisterService {
   async run({ user_id, user_input }) {
     const { admin, employee } = await User.findByPk(user_id);
@@ -48,7 +51,7 @@ class StoreRegisterService {
       throw error;
     }
 
-    return Register.create({
+    const { id } = await Register.create({
       user_id,
       client_id,
       warranty_type_id,
@@ -59,9 +62,27 @@ class StoreRegisterService {
       delivery_cost,
       repair_cost,
       exchange_value,
+      exchange_mail: Number(warranty_type_id) === 2 && true,
       register_observations,
       serial_number,
     });
+
+    const register = await Register.findByPk(id, {
+      include: [
+        {
+          association: 'client',
+        },
+        {
+          association: 'product',
+        },
+      ],
+    });
+
+    if (Number(warranty_type_id) === 2) {
+      await Queue.add(ProductExchangeMail.key, { register });
+    }
+
+    return register;
   }
 }
 
