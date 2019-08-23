@@ -130,6 +130,7 @@ class UserController {
       salesman,
       client,
       reference_id,
+      avatar_id: 1,
     });
 
     return res.json({
