@@ -147,10 +147,10 @@ class UserController {
   async update(req, res) {
     const { password, oldPassword, email } = req.body;
 
-    const user = await User.findByPk(req.userId);
+    const userExists = await User.findByPk(req.userId);
 
     // Se o e-mail for enviad, verifica se o novo já está em uso
-    if (email && user.email !== email) {
+    if (email && userExists.email !== email) {
       const emailInUse = await User.findOne({ where: { email } });
 
       if (emailInUse) {
@@ -168,21 +168,34 @@ class UserController {
     }
 
     // Verifica se a senha antiga foi enviada, e se sim, se bate com a do banco de dados
-    if (oldPassword && !(await user.checkPassword(oldPassword))) {
+    if (oldPassword && !(await userExists.checkPassword(oldPassword))) {
       return res
         .status(401)
         .json({ error: 'A senha antiga informada está incorreta.' });
     }
 
-    const { name, admin, reference_id } = await user.update(req.body);
+    const { id } = await userExists.update(req.body);
 
-    return res.status(200).json({
-      msg: 'Usuário atualizado com sucesso!',
-      name,
-      email,
-      admin,
-      reference_id,
+    const user = await User.findByPk(id, {
+      include: [
+        {
+          association: 'avatar',
+          attributes: ['id', 'path', 'url'],
+        },
+      ],
+      attributes: {
+        exclude: [
+          'avatar_id',
+          'password_hash',
+          'reset_token',
+          'token_expiration',
+          'createdAt',
+          'updatedAt',
+        ],
+      },
     });
+
+    return res.status(200).json(user);
   }
 }
 
