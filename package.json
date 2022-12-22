@@ -21,7 +21,7 @@
     "express-cache-controller": "^1.1.0",
     "express-handlebars": "^3.1.0",
     "install": "^0.13.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "multer": "^1.4.1",
     "nodemailer": "^6.3.0",
     "nodemailer-express-handlebars": "^3.1.0",
